@@ -1,3 +1,7 @@
-body {
+/* body {
     background-color: skyblue;
+} */
+
+.container {
+    margin-bottom: 50px;
 }

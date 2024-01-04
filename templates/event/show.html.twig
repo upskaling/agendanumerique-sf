@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Event{% endblock %}
+
+{% block main %}
+    <article>
+        <img src="{{ event.image }}" alt="" />
+        <h2>{{ event.title }}</h2>
+        <p>{{ event.description|raw }}</p>
+
+        <hr>
+
+        <p>Organizer: {{ event.organizer }}</p>
+        <p>Permalien: <a href="{{ event.link }}">{{ event.link }}</a></p>
+    </article>
+{# 
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Start_at</th>
+                <td>{{ event.startAt ? event.startAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>End_at</th>
+                <td>{{ event.endAt ? event.endAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Organizer</th>
+                <td>{{ event.organizer }}</td>
+            </tr>
+        </tbody>
+    </table>
+ #}
+
+    <a href="{{ path('app_event_index') }}">back to list</a>
+
+    <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>
+
+    {{ include('event/_delete_form.html.twig') }}
+{% endblock %}

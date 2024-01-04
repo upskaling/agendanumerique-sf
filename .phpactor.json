@@ -1,0 +1,5 @@
+{
+    "$schema": "/phpactor.schema.json",
+    "symfony.enabled": true,
+    "language_server_phpstan.enabled": true
+}
