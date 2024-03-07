@@ -23,6 +23,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
+    // #[IsGranted(User::ROLE_ADMIN)]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $event = new Event();
@@ -43,8 +44,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_event_show', methods: ['GET'])]
-    #[Route('/{slug}', name: 'app_event_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_event_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug}', name: 'app_event_show_slug', methods: ['GET'])]
     public function show(Event $event): Response
     {
         return $this->render('event/show.html.twig', [
@@ -53,6 +54,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
+    // #[IsGranted(User::ROLE_ADMIN)]
     public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(EventType::class, $event);
@@ -71,6 +73,7 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
+    // #[IsGranted(User::ROLE_ADMIN)]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {

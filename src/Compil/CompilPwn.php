@@ -6,8 +6,10 @@ namespace App\Compil;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CompilPwn
@@ -15,9 +17,10 @@ class CompilPwn
     private $baseUrl = 'https://pwn-association.org';
 
     public function __construct(
-        private HttpClientInterface $httpClient,
-        private EntityManagerInterface $entityManager,
-        private EventRepository $eventRepository,
+        private readonly HttpClientInterface $httpClient,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventRepository $eventRepository,
+        private readonly ValidatorInterface $validation,
     ) {
     }
 
@@ -40,6 +43,19 @@ class CompilPwn
         });
 
         $this->entityManager->flush();
+    }
+
+    private function convertDate($date)
+    {
+        $date = str_replace(
+            ['janvier', 'fevrier', 'mars', 'avr.', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre'],
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            $date
+        );
+        return \DateTimeImmutable::createFromFormat(
+            'n j, Y à H:i',
+            $date
+        );
     }
 
     private function loadEvent(string $link): void
@@ -78,17 +94,31 @@ class CompilPwn
         $event->setImage($image);
 
         // .event-description
-        $description = $crawler->filter('.event-description')->html();
-        $event->setDescription($description);
+        $description = $crawler->filter('.event-description');
+        $event->setDescription($description->html());
+
+        $dateText = $description->filter('ul:nth-child(2) > li:nth-child(2)')->text();
+        // ex: "Date et heure : mars 13, 2024 à 19:00 – mars 13, 2024 à 21:00"
+
+        // on retire "Date et heure : "
+        $dateText = str_replace("Date et heure : ", "", $dateText);
+        // ex: "mars 13, 2024 à 19:00 – mars 13, 2024 à 21:00"
+        // on explode
+        $dateText = explode(" – ", $dateText);
+        dump($dateText);
 
         $event->setEndAt(
-            new \DateTimeImmutable('now + 1 month')
+            $this->convertDate($dateText[0])
         );
         $event->setStartAt(
-            new \DateTimeImmutable('now')
+            $this->convertDate($dateText[1])
         );
 
+        // validation
+        $errors = $this->validation->validate($event);
 
-        $this->entityManager->persist($event);
+        if (count($errors) === 0) {
+            $this->entityManager->persist($event);
+        }
     }
 }

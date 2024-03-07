@@ -6,7 +6,7 @@
 
     {% for event in events %}
         <article>
-            <a href="{{ path('app_event_show', {'slug': event.slug}) }}">
+            <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
                 <img src="{{ event.image }}" alt="{{ event.title }}">
                 <h2>{{ event.title }}</h2>
             </a>
