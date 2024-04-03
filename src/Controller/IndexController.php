@@ -16,7 +16,7 @@ class IndexController extends AbstractController
         EventRepository $eventRepository,
     ): Response {
         return $this->render('index/index.html.twig', [
-            'events' => $eventRepository->findAll(),
+            'events' => $eventRepository->findLatest(),
         ]);
     }
 }

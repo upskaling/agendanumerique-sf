@@ -23,6 +23,16 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+    public function findLatest()
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.start_at >= :now')
+            ->setParameter('now', new \DateTime())
+            ->orderBy('e.start_at', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     public function isLinkExist(string $link): bool
     {
         $qb = $this->createQueryBuilder('e');
