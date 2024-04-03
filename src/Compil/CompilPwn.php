@@ -27,7 +27,7 @@ class CompilPwn implements CompilInterface
     {
         $response = $this->httpClient->request(
             'GET',
-            self::URI . '/tous-les-evenements-pwn/',
+            self::URI.'/tous-les-evenements-pwn/',
         );
 
         $content = $response->getContent();
@@ -61,7 +61,7 @@ class CompilPwn implements CompilInterface
     private function loadEvent(string $link): void
     {
         $organizer = 'pwn';
-        $url = self::URI . $link;
+        $url = self::URI.$link;
 
         // si % $link % existe déjà dans la base de données, on ne fait rien
         if ($this->eventRepository->isLinkExist($link)) {

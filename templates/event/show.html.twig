@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Event{% endblock %}
+{% block title %}{{ event.title }} - {{ parent() }}{% endblock %}
 
 {% block main %}
     <article>
         <img src="{{ event.image }}" alt="" />
-        <h2>{{ event.title }}</h2>
+        <h1>{{ event.title }}</h1>
         <p>{{ event.description|raw }}</p>
 
         <hr>

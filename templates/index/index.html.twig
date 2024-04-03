@@ -1,16 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!{% endblock %}
-
 {% block main %}
 
-    {% for event in events %}
+    <div class="wrapper">
+        {% for event in events %}
         <article>
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
-                <img src="{{ event.image }}" alt="{{ event.title }}">
+                <img src="{{ event.image }}" alt="{{ event.title }}" width="200" height="100">
                 <h2>{{ event.title }}</h2>
             </a>
+            <hr>
+            <p>Organizer: {{ event.organizer }}</p>
         </article>
-    {% endfor %}
+        {% endfor %}
+    </div>
 
 {% endblock %}

@@ -3,6 +3,21 @@
 } */
 
 .container {
-    margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
+.text-center {
+  text-align: center !important;
+}
+
+.h2 {
+  font-size: 1.75rem;
+}
+
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}

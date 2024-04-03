@@ -38,7 +38,7 @@ class EventRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('e');
         $qb->select('COUNT(e.id)');
         $qb->andWhere('e.link = :link');
-        $qb->setParameter('link', '%' . $link . '%');
+        $qb->setParameter('link', '%'.$link.'%');
 
         return (bool) $qb->getQuery()->getSingleScalarResult();
     }

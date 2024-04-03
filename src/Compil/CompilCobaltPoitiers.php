@@ -6,6 +6,7 @@ namespace App\Compil;
 
 use App\Entity\Event;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -18,6 +19,7 @@ class CompilCobaltPoitiers implements CompilInterface
         private readonly HttpClientInterface $httpClient,
         private readonly ValidatorInterface $validation,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -25,11 +27,10 @@ class CompilCobaltPoitiers implements CompilInterface
     {
         $response = $this->httpClient->request(
             'GET',
-            self::URI . "/agenda_1550.html"
+            self::URI.'/agenda_1550.html'
         );
 
         $content = $response->getContent();
-
 
         $crawler = new Crawler($content);
 
@@ -46,14 +47,25 @@ class CompilCobaltPoitiers implements CompilInterface
     {
         $organizer = 'cobaltpoitiers';
 
-
         $event = new Event();
         $event->setOrganizer($organizer);
 
         $title = $crawler->filter('p')->text();
         $event->setTitle($title);
 
-        $event->setLink(self::URI . "/agenda_1550.html");
+        $event->setLink(self::URI.'/agenda_1550.html');
+
+        try {
+            $image = $crawler->filter('div.img img')->attr('src');
+            $event->setImage(self::URI.$image);
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->debug(
+                'Image not found',
+                [
+                    'exception' => $e,
+                ]
+            );
+        }
 
         $event->setSlugWithOrganizer($title);
 
