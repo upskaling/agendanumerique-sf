@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\EventRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -21,6 +23,7 @@ class Event
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
     private ?string $link = null;
 
@@ -30,17 +33,17 @@ class Event
     #[ORM\Column]
     private ?\DateTimeImmutable $start_at = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $end_at = null;
 
     #[ORM\Column(length: 255)]
     private ?string $organizer = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: "Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets")]
+    #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
@@ -148,7 +151,7 @@ class Event
     public function setSlugWithOrganizer(string $slug): static
     {
         $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($this->organizer . "-" . $slug)->lower()->toString();
+        $slug = $slugger->slug($this->organizer.'-'.$slug)->lower()->toString();
         $this->slug = $slug;
 
         return $this;
