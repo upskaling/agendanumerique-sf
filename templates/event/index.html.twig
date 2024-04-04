@@ -32,7 +32,9 @@
                 {# <td>{{ event.image }}</td> #}
                 <td>
                     <a href="{{ path('app_event_show', {'id': event.id}) }}">show</a>
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -42,6 +44,7 @@
         {% endfor %}
         </tbody>
     </table>
-
+    {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_event_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}
