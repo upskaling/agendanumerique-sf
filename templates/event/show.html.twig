@@ -2,6 +2,10 @@
 
 {% block title %}{{ event.title }} - {{ parent() }}{% endblock %}
 
+{% block meta %}
+    <script type="application/ld+json">{{ encodeJsonLd(event)|raw }}</script>
+{% endblock %}
+
 {% block main %}
     <article>
         <img src="{{ event.image }}" alt="" />
