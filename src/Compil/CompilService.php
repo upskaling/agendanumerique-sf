@@ -9,6 +9,7 @@ class CompilService
     public function __construct(
         private readonly CompilPwn $compilPwn,
         private readonly CompilCobaltPoitiers $compilCobaltPoitiers,
+        private readonly CompilEMF $compilEMF,
     ) {
     }
 
@@ -19,5 +20,6 @@ class CompilService
 
         $this->compilPwn->compil();
         $this->compilCobaltPoitiers->compil();
+        $this->compilEMF->compil();
     }
 }

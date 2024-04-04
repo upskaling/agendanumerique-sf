@@ -30,6 +30,7 @@ class Event
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[Assert\NotBlank]
     #[ORM\Column]
     private ?\DateTimeImmutable $start_at = null;
 
