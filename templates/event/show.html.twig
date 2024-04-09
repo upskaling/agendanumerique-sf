@@ -8,14 +8,26 @@
 
 {% block main %}
     <article>
-        <img src="{{ event.image }}" alt="" />
+        <img src="{{ event.image }}" alt="" loading="lazy"/>
         <h1>{{ event.title }}</h1>
-        <p>{{ event.description|raw }}</p>
+        <p>{{ event.description|sanitize_html }}</p>
 
         <hr>
 
-        <p>Organizer: {{ event.organizer }}</p>
-        <p>Permalien: <a href="{{ event.link }}">{{ event.link }}</a></p>
+        {% if event.startAt %}
+        <p>
+            <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" />
+            : <time datetime="{{ event.startAt|date('r', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short', locale='fr') }}</time>
+        </p>
+        {% endif %}
+        <p>
+            <twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" />
+            : {{ event.organizer }}
+        </p>
+        <p>
+            <twig:ux:icon name="bi:link-45deg" height="28" width="28" aria-label="permalien"/>
+            : <a href="{{ event.link }}">{{ event.link }}</a>
+        </p>
     </article>
 {# 
     <table class="table">
@@ -36,10 +48,10 @@
     </table>
  #}
 
-    <a href="{{ path('app_event_index') }}">back to list</a>
+    <a href="{{ path('app_event_index') }}">retour à la liste</a>
 
     {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_event_edit', {'id': event.id}) }}">edit</a>    
+    <a href="{{ path('app_event_edit', {'id': event.id}) }}">éditer</a>    
     {% endif %}
 
     {{ include('event/_delete_form.html.twig') }}

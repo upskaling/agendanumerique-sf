@@ -6,11 +6,19 @@
         {% for event in events %}
         <article>
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
-                <img src="{{ event.image }}" alt="{{ event.title }}" width="200" height="100">
+                {% if event.image %}
+                <img src="{{ event.image }}" alt="{{ event.title }}" width="200" height="100" loading="lazy"/>
+                {% endif %}
                 <h2>{{ event.title }}</h2>
             </a>
             <hr>
-            <p>Organizer: {{ event.organizer }}</p>
+            {% if event.start_at %}
+            <p>
+                <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" /> 
+                : <time datetime="{{ event.start_at|date() }}" >{{ event.start_at|format_datetime('medium', 'short', locale='fr') }}</time>
+            </p>
+            {% endif %}
+            <p><twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" /> : {{ event.organizer }}</p>
         </article>
         {% endfor %}
     </div>

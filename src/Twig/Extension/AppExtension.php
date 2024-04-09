@@ -24,7 +24,7 @@ class AppExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('encodeJsonLd', [AppJsonLdRuntime::class, 'encodeJsonLd'])
+            new TwigFunction('encodeJsonLd', [AppJsonLdRuntime::class, 'encodeJsonLd']),
         ];
     }
 }

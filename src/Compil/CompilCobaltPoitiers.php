@@ -45,9 +45,9 @@ class CompilCobaltPoitiers implements CompilInterface
 
     private function loadEvent(Crawler $crawler)
     {
-        $organizer = 'cobaltpoitiers';
-
         $event = new Event();
+        $organizer = $crawler->filter('span:contains("Organisateur :")')->text();
+        $organizer = explode('Organisateur : ', $organizer)[1];
         $event->setOrganizer($organizer);
 
         $title = $crawler->filter('p')->text();
@@ -74,10 +74,15 @@ class CompilCobaltPoitiers implements CompilInterface
 
         $date = $crawler->filter('h3')->text();
 
+        $texte = $crawler->filter('span:contains("Heure")')->text();
+        preg_match('/Heure\s*:\s*([\dh]+)/', $texte, $matches);
+        $heure = isset($matches[1]) ? $matches[1] : '';
+
         $date = \DateTimeImmutable::createFromFormat(
-            'd/m',
-            $date
+            'd/m H\hi',
+            $date.' '.$heure
         );
+
         $event->setStartAt($date);
 
         // $event->setEndAt();

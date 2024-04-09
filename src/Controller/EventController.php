@@ -5,23 +5,28 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Event;
+use App\Entity\User;
 use App\Form\EventType;
 use App\Repository\EventRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Entity\User;
 
 #[Route('/event')]
 class EventController extends AbstractController
 {
-    #[Route('/', name: 'app_event_index', methods: ['GET'])]
-    public function index(EventRepository $eventRepository): Response
-    {
-        return $this->render('event/index.html.twig', [
+    #[Route('/', name: 'app_event_index', defaults: ['_format' => 'html'], methods: ['GET'])]
+    #[Route('/feed.xml', name: 'app_event_feed', defaults: ['_format' => 'xml'], methods: ['GET'])]
+    #[Cache(smaxage: 10)]
+    public function index(
+        string $_format,
+        EventRepository $eventRepository,
+    ): Response {
+        return $this->render('event/index.'.$_format.'.twig', [
             'events' => $eventRepository->findAll(),
         ]);
     }
