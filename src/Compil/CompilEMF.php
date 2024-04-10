@@ -6,6 +6,7 @@ namespace App\Compil;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
+use App\Repository\PostalAddressRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,6 +23,7 @@ class CompilEMF implements CompilInterface
         private readonly EventRepository $eventRepository,
         private readonly ValidatorInterface $validation,
         private readonly LoggerInterface $logger,
+        private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
 
@@ -36,6 +38,7 @@ class CompilEMF implements CompilInterface
         yield 'https://emf.fr/ec3_event/la-chasse-aux-aliens-commence/';
         yield 'https://emf.fr/ec3_event/mon-premier-jeu-video-les-fous-du-volant/';
         yield 'https://emf.fr/ec3_event/mon-premier-jeu-video-snake-le-serpent-qui-se-mord-la-queue/';
+        yield 'https://emf.fr/ec3_event/je-debute-avec-chatgpt/';
     }
 
     public function compil(): void
@@ -94,6 +97,13 @@ class CompilEMF implements CompilInterface
 
         $event->setOrganizer($organizer);
 
+        $lieu = $crawler->filter('.info_lieu b')->text();
+        $lieuName = 'Espace Mendès France';
+        if (str_contains($lieu, $lieuName)) {
+            $location = $this->postalAddressRepository->findOneBy(['name' => $lieuName]);
+            $event->setLocation($location);
+        }
+
         $title = $crawler->filter('.hero-title-inside-text h1')->text();
         $event->setTitle($title);
         $event->setSlugWithOrganizer($title);
@@ -107,14 +117,23 @@ class CompilEMF implements CompilInterface
         $description = $crawler->filter("meta[property='og:description']")->attr('content');
         $event->setDescription($description);
 
-        $date = $crawler->filter('.ec3_schedule_date.ec3_schedule_next')->text(); // "18 juin 2024 14 h 00 -> 16 h 00"
-        $date = $this->convertDate($date);
-        $event->setStartAt($date);
+        $dates = $crawler->filter('.ec3_schedule_date.ec3_schedule_next')->each(
+            function ($node) {
+                return $this->convertDate($node->text()); // "18 juin 2024 14 h 00 -> 16 h 00"
+            }
+        );
 
-        $errors = $this->validation->validate($event);
+        foreach ($dates as $date) {
+            $events = clone $event;
 
-        if (0 === \count($errors)) {
-            $this->entityManager->persist($event);
+            $events->setStartAt($date);
+            $events->setSlug($events->getSlug().'-'.$date->format('Y-m-d'));
+
+            $errors = $this->validation->validate($events);
+
+            if (0 === \count($errors)) {
+                $this->entityManager->persist($events);
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ namespace App\Compil;
 
 use App\Entity\Event;
 use App\Repository\EventRepository;
+use App\Repository\PostalAddressRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -20,6 +21,7 @@ class CompilPwn implements CompilInterface
         private readonly EntityManagerInterface $entityManager,
         private readonly EventRepository $eventRepository,
         private readonly ValidatorInterface $validation,
+        private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
 
@@ -96,6 +98,13 @@ class CompilPwn implements CompilInterface
         // .event-description
         $description = $crawler->filter('.event-description');
         $event->setDescription($description->html());
+
+        $lieu = $crawler->filter('.event-description > ul:nth-child(2) > li:nth-child(1) > a')->text();
+        $lieuName = 'La Taverne Du Geek';
+        if (str_contains($lieu, $lieuName)) {
+            $location = $this->postalAddressRepository->findOneBy(['name' => $lieuName]);
+            $event->setLocation($location);
+        }
 
         $dateText = $description->filter('ul:nth-child(2) > li:nth-child(2)')->text();
         // ex: "Date et heure : mars 13, 2024 à 19:00 – mars 13, 2024 à 21:00"

@@ -10,7 +10,8 @@
     <article>
         <img src="{{ event.image }}" alt="" loading="lazy"/>
         <h1>{{ event.title }}</h1>
-        <p>{{ event.description|sanitize_html }}</p>
+        {# <iframe sandbox seamless srcdoc="<html />"></iframe> #}
+        <div>{{ event.description|sanitize_html }}</div>
 
         <hr>
 
@@ -19,6 +20,13 @@
             <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" />
             : <time datetime="{{ event.startAt|date('r', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short', locale='fr') }}</time>
         </p>
+        {% endif %}
+        {% if event.location %}
+        <address>
+            <twig:ux:icon name="bi:pin-map" height="28" width="28" aria-label="location" />
+            {# <a href="geo:{{ event.location.latitude }},{{ event.location.longitude }}">{{ event.location }}</a> #}
+            : {{ event.location }}
+        </address>
         {% endif %}
         <p>
             <twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" />
@@ -29,30 +37,13 @@
             : <a href="{{ event.link }}">{{ event.link }}</a>
         </p>
     </article>
-{# 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Start_at</th>
-                <td>{{ event.startAt ? event.startAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>End_at</th>
-                <td>{{ event.endAt ? event.endAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Organizer</th>
-                <td>{{ event.organizer }}</td>
-            </tr>
-        </tbody>
-    </table>
- #}
-
+ 
+    {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_event_index') }}">retour à la liste</a>
 
-    {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_event_edit', {'id': event.id}) }}">éditer</a>    
-    {% endif %}
 
     {{ include('event/_delete_form.html.twig') }}
+    {% endif %}
+
 {% endblock %}

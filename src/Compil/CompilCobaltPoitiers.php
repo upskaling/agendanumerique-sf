@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Compil;
 
 use App\Entity\Event;
+use App\Repository\PostalAddressRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -20,6 +21,7 @@ class CompilCobaltPoitiers implements CompilInterface
         private readonly ValidatorInterface $validation,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
+        private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
 
@@ -71,6 +73,13 @@ class CompilCobaltPoitiers implements CompilInterface
 
         $description = $crawler->filter('.inscription')->html();
         $event->setDescription($description);
+
+        $lieu = $crawler->filter('span:contains("Lieu :")')->text();
+        $lieu = explode('Lieu : ', $lieu)[1];
+        if ('Cobalt' === $lieu) {
+            $location = $this->postalAddressRepository->findOneBy(['name' => $organizer]);
+            $event->setLocation($location);
+        }
 
         $date = $crawler->filter('h3')->text();
 

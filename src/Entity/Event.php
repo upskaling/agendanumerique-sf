@@ -48,6 +48,9 @@ class Event
     #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
+    #[ORM\ManyToOne(inversedBy: 'events')]
+    private ?PostalAddress $location = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -154,6 +157,18 @@ class Event
         $slugger = new AsciiSlugger();
         $slug = $slugger->slug($this->organizer.'-'.$slug)->lower()->toString();
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getLocation(): ?PostalAddress
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?PostalAddress $location): static
+    {
+        $this->location = $location;
 
         return $this;
     }
