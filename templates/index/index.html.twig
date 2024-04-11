@@ -7,7 +7,7 @@
         <article>
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
                 {% if event.image %}
-                <img src="{{ event.image }}" alt="{{ event.title }}" width="200" height="100" loading="lazy"/>
+                <twig:Image src="{{ event.image }}" alt="{{ event.title }}" width="200" height="100" loading="lazy"/>
                 {% endif %}
                 <h2>{{ event.title }}</h2>
             </a>

@@ -112,6 +112,7 @@ class CompilEMF implements CompilInterface
         $event->setLink($url);
 
         $image = $crawler->filter("meta[property='og:image']")->attr('content');
+
         $event->setImage($image);
 
         $description = $crawler->filter("meta[property='og:description']")->attr('content');

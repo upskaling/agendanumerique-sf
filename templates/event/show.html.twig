@@ -8,7 +8,9 @@
 
 {% block main %}
     <article>
-        <img src="{{ event.image }}" alt="" loading="lazy"/>
+        {% if event.image %}
+        <twig:Image src="{{ event.image }}" alt="{{ event.title }}" loading="lazy"/>
+        {% endif %}
         <h1>{{ event.title }}</h1>
         {# <iframe sandbox seamless srcdoc="<html />"></iframe> #}
         <div>{{ event.description|sanitize_html }}</div>
