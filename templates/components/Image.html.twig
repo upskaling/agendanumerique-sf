@@ -1,6 +1,4 @@
-<img 
-    src="{{ path('image_glide') ~ '?' ~ this.parameterUrl|url_encode }}"
-    {% if this.width %}width="{{ this.width }}"{% endif %}
-    {% if this.height %}height="{{ this.height }}"{% endif %}
-    {{ attributes }}
-/>
+<img src="{{ path('image_glide') ~ '?' ~ this.parameterUrl|url_encode }}"
+    {%- if this.width -%}width="{{ this.width }}"{%- endif -%}
+    {%- if this.height -%}height="{{ this.height }}"{%- endif -%}
+    {{ attributes }} />

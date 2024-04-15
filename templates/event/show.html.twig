@@ -3,13 +3,19 @@
 {% block title %}{{ event.title }} - {{ parent() }}{% endblock %}
 
 {% block meta %}
+    <meta property="og:title" content="{{ event.title }}" />
+    {% if event.image -%}
+    <meta property="og:image" content="{{ event.image }}" />
+    {% endif -%}
+    <meta property="og:type" content="event" />
+    <meta property="og:url" content="{{ event.link }}" />
     <script type="application/ld+json">{{ encodeJsonLd(event)|raw }}</script>
 {% endblock %}
 
 {% block main %}
     <article>
         {% if event.image %}
-        <twig:Image src="{{ event.image }}" alt="{{ event.title }}" loading="lazy"/>
+        <twig:Image src="{{ event.image }}" alt="" loading="lazy" format="webp"/>
         {% endif %}
         <h1>{{ event.title }}</h1>
         {# <iframe sandbox seamless srcdoc="<html />"></iframe> #}
