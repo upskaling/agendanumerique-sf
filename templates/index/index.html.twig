@@ -2,7 +2,7 @@
 
 {% block main %}
 
-    <div class="wrapper">
+    <div class="grid">
         {% for event in events %}
         <article>
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">

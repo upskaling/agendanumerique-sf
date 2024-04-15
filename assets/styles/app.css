@@ -14,10 +14,14 @@
   font-size: 1.75rem;
 }
 
+@media (min-width: 767px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
-.wrapper {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
-  grid-auto-rows: minmax(100px, auto);
+@media (min-width: 1547px) {
+  .grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
 }
