@@ -13,6 +13,7 @@ final class Image
     public ?string $src = null;
     public ?int $width = null;
     public ?int $height = null;
+    public ?string $format = null;
 
     public function __construct(
         private string $secret,
@@ -30,6 +31,11 @@ final class Image
         if (null !== $this->height) {
             $parameters['h'] = $this->height;
         }
+
+        if (null!== $this->format) {
+            $parameters['fm'] = $this->format;
+        }
+
         $parameters['url'] = $this->src;
 
         $parameters['s'] = SignatureFactory::create($this->secret)->generateSignature('', $parameters);
