@@ -32,7 +32,7 @@ final class Image
             $parameters['h'] = $this->height;
         }
 
-        if (null!== $this->format) {
+        if (null !== $this->format) {
             $parameters['fm'] = $this->format;
         }
 
