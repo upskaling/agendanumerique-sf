@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:compil',
-    description: 'Add a short description for your command',
+    description: 'To fetch events',
 )]
 class CompilCommand extends Command
 {
