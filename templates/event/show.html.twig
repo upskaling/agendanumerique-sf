@@ -26,7 +26,7 @@
         {% if event.startAt %}
         <p>
             <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" />
-            : <time datetime="{{ event.startAt|date('r', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short', locale='fr') }}</time>
+            : <time datetime="{{ event.startAt|date('Y-m-d\\Th:i:s', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short') }}</time>
         </p>
         {% endif %}
         {% if event.location %}
