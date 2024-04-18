@@ -42,4 +42,19 @@ final class Image
 
         return $parameters;
     }
+
+    public function getDefaultAttributes()
+    {
+        $attributes = [];
+
+        if (null !== $this->width) {
+            $attributes['width'] = $this->width;
+        }
+
+        if (null !== $this->height) {
+            $attributes['height'] = $this->height;
+        }
+
+        return $attributes;
+    }
 }
