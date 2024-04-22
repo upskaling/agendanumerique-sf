@@ -9,7 +9,7 @@
     {% endif -%}
     <meta property="og:type" content="event" />
     <meta property="og:url" content="{{ event.link }}" />
-    <script type="application/ld+json">{{ encodeJsonLd(event)|raw }}</script>
+    {{ encodeJsonLd(event)|raw }}
 {% endblock %}
 
 {% block main %}

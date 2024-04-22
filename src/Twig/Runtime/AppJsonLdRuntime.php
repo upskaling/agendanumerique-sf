@@ -77,11 +77,11 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
             $json['image'] = $image;
         }
 
-        $result = json_encode($json);
+        $result = json_encode($json, \JSON_PRETTY_PRINT);
         if (false === $result) {
             throw new \RuntimeException('Unable to encode JSON-LD');
         }
 
-        return $result;
+        return "<script type=\"application/ld+json\">{$result}</script>";
     }
 }
