@@ -40,13 +40,15 @@ class CompilPwn implements CompilInterface
         $crawler->filter('.upcoming-events .event-inner>a')
             ->each(function (Crawler $event) {
                 $link = $event->attr('href');
-                $this->loadEvent($link);
+                if (null !== $link) {
+                    $this->loadEvent($link);
+                }
             });
 
         $this->entityManager->flush();
     }
 
-    private function convertDate($date)
+    private function convertDate(string $date): \DateTimeImmutable|false
     {
         $date = str_replace(
             ['jan.', 'fév.', 'mars', 'avr.', 'mai', 'juin', 'juil', 'aou', 'sep', 'oct.', 'nov.', 'déc.'],
@@ -93,7 +95,9 @@ class CompilPwn implements CompilInterface
 
         // meta[property='og:image']
         $image = $crawler->filter("meta[property='og:image']")->attr('content');
-        $event->setImage($image);
+        if ($image) {
+            $event->setImage($image);
+        }
 
         // .event-description
         $description = $crawler->filter('.event-description');
@@ -115,12 +119,14 @@ class CompilPwn implements CompilInterface
         // on explode
         $dateText = explode(' – ', $dateText);
 
-        $event->setEndAt(
-            $this->convertDate($dateText[0])
-        );
-        $event->setStartAt(
-            $this->convertDate($dateText[1])
-        );
+        $endAt = $this->convertDate($dateText[0]);
+        if ($endAt) {
+            $event->setEndAt($endAt);
+        }
+        $startAt = $this->convertDate($dateText[1]);
+        if ($startAt) {
+            $event->setStartAt($startAt);
+        }
 
         // validation
         $errors = $this->validation->validate($event);

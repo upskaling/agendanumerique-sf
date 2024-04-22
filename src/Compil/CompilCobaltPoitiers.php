@@ -45,7 +45,7 @@ class CompilCobaltPoitiers implements CompilInterface
         $this->entityManager->flush();
     }
 
-    private function loadEvent(Crawler $crawler)
+    private function loadEvent(Crawler $crawler): void
     {
         $event = new Event();
         $organizer = $crawler->filter('span:contains("Organisateur :")')->text();
@@ -92,7 +92,9 @@ class CompilCobaltPoitiers implements CompilInterface
             $date.' '.$heure
         );
 
-        $event->setStartAt($date);
+        if ($date) {
+            $event->setStartAt($date);
+        }
 
         // $event->setEndAt();
 

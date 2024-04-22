@@ -17,8 +17,8 @@ class EventType extends AbstractType
             ->add('title')
             ->add('link')
             ->add('description')
-            ->add('start_at')
-            ->add('end_at')
+            ->add('startAt')
+            ->add('endAt')
             ->add('organizer')
             ->add('image')
         ;

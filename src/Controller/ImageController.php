@@ -13,6 +13,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -34,7 +35,8 @@ class ImageController extends AbstractController
             throw new BadRequestHttpException('Invalid signature');
         }
 
-        $url = $parameters['url'];
+        /** @var string $url */
+        $url = $request->get('url');
 
         $cache = new FilesystemAdapter();
 
@@ -54,7 +56,13 @@ class ImageController extends AbstractController
         $glide->setResponseFactory(new SymfonyResponseFactory($request));
 
         try {
-            return $glide->getImageResponse($cacheItem->get(), $parameters);
+            /** @var string $path */
+            $path = $cacheItem->get();
+
+            /** @var StreamedResponse $response */
+            $response = $glide->getImageResponse($path, $parameters);
+
+            return $response;
         } catch (\Exception $e) {
             throw new BadRequestHttpException('Invalid image');
         }

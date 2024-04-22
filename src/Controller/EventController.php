@@ -81,10 +81,13 @@ class EventController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
-    // #[IsGranted(User::ROLE_ADMIN)]
+    #[IsGranted(User::ROLE_ADMIN)]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$event->getId(), $request->request->get('_token'))) {
+        /** @var string|null $token */
+        $token = $request->request->get('_token');
+
+        if ($this->isCsrfTokenValid('delete'.$event->getId(), $token)) {
             $entityManager->remove($event);
             $entityManager->flush();
         }

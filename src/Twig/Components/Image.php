@@ -20,7 +20,10 @@ final class Image
     ) {
     }
 
-    public function getParameterUrl()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getParameterUrl(): array
     {
         $parameters = [];
 
@@ -43,7 +46,10 @@ final class Image
         return $parameters;
     }
 
-    public function getDefaultAttributes()
+    /**
+     * @return array<string, mixed>
+     */
+    public function getDefaultAttributes(): array
     {
         $attributes = [];
 

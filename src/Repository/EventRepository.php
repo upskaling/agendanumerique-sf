@@ -23,12 +23,15 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-    public function findLatest()
+    /**
+     * @return array<mixed>
+     */
+    public function findLatest(): array
     {
         return $this->createQueryBuilder('e')
-            ->where('e.start_at >= :now')
+            ->where('e.startAt >= :now')
             ->setParameter('now', new \DateTime())
-            ->orderBy('e.start_at', 'ASC')
+            ->orderBy('e.startAt', 'ASC')
             ->getQuery()
             ->getArrayResult();
     }

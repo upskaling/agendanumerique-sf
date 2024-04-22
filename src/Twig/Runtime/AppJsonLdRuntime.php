@@ -14,14 +14,9 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
-    public function encodeJsonLd($event)
+    public function encodeJsonLd(Event $event): string
     {
         // https://schema.org/docs/documents.html
-
-        if (!$event instanceof Event) {
-            throw new \InvalidArgumentException(sprintf('Expected an instance of %s, got %s', Event::class, $event::class));
-        }
-
         $json = [
             '@context' => 'https://schema.org',
             '@type' => 'Event',
@@ -82,6 +77,11 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
             $json['image'] = $image;
         }
 
-        return json_encode($json);
+        $result = json_encode($json);
+        if (false === $result) {
+            throw new \RuntimeException('Unable to encode JSON-LD');
+        }
+
+        return $result;
     }
 }

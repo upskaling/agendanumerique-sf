@@ -12,10 +12,10 @@
                 <h2>{{ event.title }}</h2>
             </a>
             <hr>
-            {% if event.start_at %}
+            {% if event.startAt %}
             <p>
                 <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" /> 
-                : <time datetime="{{ event.start_at|date('Y-m-d\\Th:i:s') }}" >{{ event.start_at|format_datetime('medium', 'short') }}</time>
+                : <time datetime="{{ event.startAt|date('Y-m-d\\Th:i:s') }}" >{{ event.startAt|format_datetime('medium', 'short') }}</time>
             </p>
             {% endif %}
             <p><twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" /> : {{ event.organizer }}</p>

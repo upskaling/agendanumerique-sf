@@ -32,10 +32,10 @@ class Event
 
     #[Assert\NotBlank]
     #[ORM\Column]
-    private ?\DateTimeImmutable $start_at = null;
+    private ?\DateTimeImmutable $startAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $end_at = null;
+    private ?\DateTimeImmutable $endAt = null;
 
     #[ORM\Column(length: 255)]
     private ?string $organizer = null;
@@ -94,24 +94,24 @@ class Event
 
     public function getStartAt(): ?\DateTimeImmutable
     {
-        return $this->start_at;
+        return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeImmutable $start_at): static
+    public function setStartAt(\DateTimeImmutable $startAt): static
     {
-        $this->start_at = $start_at;
+        $this->startAt = $startAt;
 
         return $this;
     }
 
     public function getEndAt(): ?\DateTimeImmutable
     {
-        return $this->end_at;
+        return $this->endAt;
     }
 
-    public function setEndAt(\DateTimeImmutable $end_at): static
+    public function setEndAt(\DateTimeImmutable $endAt): static
     {
-        $this->end_at = $end_at;
+        $this->endAt = $endAt;
 
         return $this;
     }
