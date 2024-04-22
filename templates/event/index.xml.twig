@@ -14,6 +14,7 @@
             <guid>{{ event.link }}</guid>
             <pubDate>{{ event.startAt|date(format='r', timezone='GMT') }} </pubDate>
             {% if event.image %}<enclosure url="{{ event.image }}" length="0" type="image/png" loading="lazy"/>{% endif %}
+            <description><![CDATA[{{ event.description|sanitize_html }}]]></description>
         </item>
         {% endfor %}
     </channel>
