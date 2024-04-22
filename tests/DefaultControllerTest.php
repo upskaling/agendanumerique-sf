@@ -22,5 +22,6 @@ class DefaultControllerTest extends WebTestCase
     public function getPublicUrls(): \Generator
     {
         yield ['/'];
+        yield ['/event/feed.xml'];
     }
 }
