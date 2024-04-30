@@ -7,8 +7,11 @@ namespace App\Entity;
 use App\Repository\EventRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
@@ -19,6 +22,11 @@ class Event
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
+
+    #[Assert\Uuid()]
+    #[ORM\Column(type: UuidType::NAME, unique: true)]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
+    private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255)]
     private ?string $title = null;
@@ -51,9 +59,19 @@ class Event
     #[ORM\ManyToOne(inversedBy: 'events')]
     private ?PostalAddress $location = null;
 
+    public function __construct()
+    {
+        $this->uuid = Uuid::v6();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUuid(): ?Uuid
+    {
+        return $this->uuid;
     }
 
     public function getTitle(): ?string

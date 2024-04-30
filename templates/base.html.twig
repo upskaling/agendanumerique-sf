@@ -32,6 +32,26 @@
                 {% block main %}{% endblock %}
             </main>
 
+            <footer class="text-center">
+        
+                <a href="{{ path('app_event_feed') }}">
+                    <twig:ux:icon name="bi:rss-fill" height="28" width="28" aria-label="flux RSS" />
+                </a>
+
+                •
+        
+                <a href="{{ path('app_event_ics') }}">
+                    <twig:ux:icon name="bi:calendar3" height="28" width="28" aria-label="flux Calendar" />
+                </a>
+
+                •
+        
+                <a href="https://github.com/upskaling/agendanumerique-sf">
+                    <twig:ux:icon name="bi:github" height="28" width="28" aria-label="github du projet" />
+                </a>
+        
+            </footer>
+
         {% endblock %}
     </body>
 </html>

@@ -24,16 +24,19 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return array<mixed>
+     * @return array<Event>
      */
     public function findLatest(): array
     {
-        return $this->createQueryBuilder('e')
+        /** @var Event[] $result */
+        $result = $this->createQueryBuilder('e')
             ->where('e.startAt >= :now')
             ->setParameter('now', new \DateTime())
             ->orderBy('e.startAt', 'ASC')
             ->getQuery()
-            ->getArrayResult();
+            ->getResult();
+
+        return $result;
     }
 
     public function isLinkExist(string $link): bool
