@@ -119,13 +119,14 @@ class CompilPwn implements CompilInterface
         // on explode
         $dateText = explode(' – ', $dateText);
 
-        $endAt = $this->convertDate($dateText[0]);
-        if ($endAt) {
-            $event->setEndAt($endAt);
-        }
-        $startAt = $this->convertDate($dateText[1]);
+        $startAt = $this->convertDate($dateText[0]);
         if ($startAt) {
             $event->setStartAt($startAt);
+        }
+
+        $endAt = $this->convertDate($dateText[1]);
+        if ($endAt) {
+            $event->setEndAt($endAt);
         }
 
         // validation
