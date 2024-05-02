@@ -16,6 +16,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[UniqueEntity('slug')]
+#[Assert\Expression(
+    'this.getStartAt() < this.getEndAt()',
+    message: 'La date de début doit être inférieure à la date de fin'
+)]
 class Event
 {
     #[ORM\Id]
