@@ -38,14 +38,4 @@ class EventRepository extends ServiceEntityRepository
 
         return $result;
     }
-
-    public function isLinkExist(string $link): bool
-    {
-        $qb = $this->createQueryBuilder('e');
-        $qb->select('COUNT(e.id)');
-        $qb->andWhere('e.link = :link');
-        $qb->setParameter('link', '%'.$link.'%');
-
-        return (bool) $qb->getQuery()->getSingleScalarResult();
-    }
 }

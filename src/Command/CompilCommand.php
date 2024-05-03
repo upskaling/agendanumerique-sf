@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Compil\CompilService;
+use App\DTO\EventValidationDTO;
+use App\EventRetrieval\EventRetrievalInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:compil',
@@ -17,8 +21,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class CompilCommand extends Command
 {
+    /**
+     * @param iterable<EventRetrievalInterface> $compils
+     */
     public function __construct(
-        private CompilService $compilService,
+        #[TaggedIterator('app.EventRetrieval')]
+        private readonly iterable $compils,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ValidatorInterface $validation,
     ) {
         parent::__construct();
     }
@@ -31,7 +41,36 @@ class CompilCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->compilService->compil();
+        /** @var EventValidationDTO[] $eventValidationDTOList */
+        $eventValidationDTOList = [];
+        foreach ($this->compils as $compil) {
+            $eventValidationDTOList = array_merge($eventValidationDTOList, $compil->retrieveEvents());
+        }
+
+        foreach ($eventValidationDTOList as $eventValidationDTO) {
+            $errors = $this->validation->validate($eventValidationDTO);
+
+            if (0 !== \count($errors)) {
+                continue;
+            }
+
+            $event = $eventValidationDTO->toEntity();
+            // vérifiez que le slug et unique
+
+            $errors = $this->validation->validate($event);
+
+            if (0 !== \count($errors)) {
+                continue;
+            }
+
+            $this->entityManager->persist($event);
+
+            $io->success(sprintf(
+                'Event "%s" has been created',
+                $event->getTitle(),
+            ));
+        }
+        $this->entityManager->flush();
 
         return Command::SUCCESS;
     }

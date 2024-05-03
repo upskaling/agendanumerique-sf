@@ -2,30 +2,26 @@
 
 declare(strict_types=1);
 
-namespace App\Compil;
+namespace App\EventRetrieval;
 
-use App\Entity\Event;
+use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class CompilCobaltPoitiers implements CompilInterface
+class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
 {
     private const URI = 'https://www.cobaltpoitiers.fr';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly ValidatorInterface $validation,
-        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $logger,
         private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
 
-    public function compil(): void
+    public function retrieveEvents(): array
     {
         $response = $this->httpClient->request(
             'GET',
@@ -37,17 +33,15 @@ class CompilCobaltPoitiers implements CompilInterface
         $crawler = new Crawler($content);
 
         // .agenda.elem
-        $crawler->filter('.agenda.elem')
+        return $crawler->filter('.agenda.elem')
             ->each(function (Crawler $crawler) {
-                $this->loadEvent($crawler);
+                return $this->loadEvent($crawler);
             });
-
-        $this->entityManager->flush();
     }
 
-    private function loadEvent(Crawler $crawler): void
+    private function loadEvent(Crawler $crawler): EventValidationDTO
     {
-        $event = new Event();
+        $event = new EventValidationDTO();
         $organizer = $crawler->filter('span:contains("Organisateur :")')->text();
         $organizer = explode('Organisateur : ', $organizer)[1];
         $event->setOrganizer($organizer);
@@ -98,10 +92,6 @@ class CompilCobaltPoitiers implements CompilInterface
 
         // $event->setEndAt();
 
-        $errors = $this->validation->validate($event);
-
-        if (0 === \count($errors)) {
-            $this->entityManager->persist($event);
-        }
+        return $event;
     }
 }

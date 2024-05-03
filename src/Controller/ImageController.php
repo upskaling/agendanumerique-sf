@@ -11,6 +11,7 @@ use League\Glide\Signatures\SignatureFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -51,6 +52,13 @@ class ImageController extends AbstractController
                 $cacheItem->set($imageName);
                 $cache->save($cacheItem);
             }
+        }
+
+        // si l'image télécharger et un gif
+        if (preg_match('/\.gif$/', $url)) {
+            return new BinaryFileResponse(
+                $this->getParameter('app.image_dir').'/'.$cacheItem->get()
+            );
         }
 
         $glide->setResponseFactory(new SymfonyResponseFactory($request));

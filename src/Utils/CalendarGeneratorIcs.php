@@ -11,7 +11,7 @@ use Jsvrcek\ICS\Model\Calendar;
 use Jsvrcek\ICS\Model\CalendarEvent;
 use Jsvrcek\ICS\Utility\Formatter;
 
-class IcsService
+class CalendarGeneratorIcs
 {
     /**
      * @param Event[] $events
