@@ -2,24 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Compil;
+namespace App\EventRetrieval;
 
-use App\Entity\Event;
+use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-class CompilEMF implements CompilInterface
+class EventRetrievalEMF implements EventRetrievalInterface
 {
     private const URI = 'https://emf.fr';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ValidatorInterface $validation,
         private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
@@ -41,7 +37,7 @@ class CompilEMF implements CompilInterface
         yield $this::URI.'/ec3_event/je-debute-avec-chatgpt/';
     }
 
-    public function compil(): void
+    public function retrieveEvents(): array
     {
         $responses = [];
         foreach ($this->getUrl() as $url) {
@@ -51,10 +47,12 @@ class CompilEMF implements CompilInterface
             );
         }
 
+        $eventValidationDTOList = [];
         foreach ($responses as $response) {
-            $this->loadEvent($response);
+            $eventValidationDTOList = array_merge($eventValidationDTOList, $this->loadEvent($response));
         }
-        $this->entityManager->flush();
+
+        return $eventValidationDTOList;
     }
 
     private function convertDate(string $date): \DateTimeImmutable|false
@@ -76,7 +74,10 @@ class CompilEMF implements CompilInterface
         );
     }
 
-    private function loadEvent(ResponseInterface $response): void
+    /**
+     * @return EventValidationDTO[]
+     */
+    private function loadEvent(ResponseInterface $response): array
     {
         $organizer = 'emf';
 
@@ -89,11 +90,11 @@ class CompilEMF implements CompilInterface
         try {
             $date = $crawler->filter('.ec3_iconlet.ec3_past')->text();
 
-            return;
+            return [];
         } catch (\InvalidArgumentException $e) {
         }
 
-        $event = new Event();
+        $event = new EventValidationDTO();
 
         $event->setOrganizer($organizer);
 
@@ -129,17 +130,16 @@ class CompilEMF implements CompilInterface
             }
         );
 
+        $eventsList = [];
         foreach ($dates as $date) {
             $events = clone $event;
 
             $events->setStartAt($date);
             $events->setSlug($events->getSlug().'-'.$date->format('Y-m-d'));
 
-            $errors = $this->validation->validate($events);
-
-            if (0 === \count($errors)) {
-                $this->entityManager->persist($events);
-            }
+            $eventsList[] = $events;
         }
+
+        return $eventsList;
     }
 }

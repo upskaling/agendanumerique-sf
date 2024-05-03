@@ -15,7 +15,9 @@
 {% block main %}
     <article>
         {% if event.image %}
-        <twig:Image src="{{ event.image }}" alt="" loading="lazy" format="webp"/>
+        <div class="text-center">
+            <twig:Image src="{{ event.image }}" alt="" loading="lazy" format="webp"/>
+        </div>
         {% endif %}
         <h1>{{ event.title }}</h1>
         {# <iframe sandbox seamless srcdoc="<html />"></iframe> #}
@@ -41,8 +43,14 @@
             : {{ event.organizer }}
         </p>
         <p>
-            <twig:ux:icon name="bi:link-45deg" height="28" width="28" aria-label="permalien"/>
+            <twig:ux:icon name="bi:link-45deg" height="28" width="28" aria-label="source"/>
             : <a href="{{ event.link }}">{{ event.link }}</a>
+        </p>
+        <p>
+            <twig:ux:icon name="bi:calendar-event" height="28" width="28" aria-label=""/>
+            : <a href="{{ path('app_event_show_slug_ics', {'slug': event.slug}) }}" data-turbo="false">
+                Télécharger Event au format ics
+            </a>
         </p>
     </article>
  

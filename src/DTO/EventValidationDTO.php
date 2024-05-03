@@ -2,172 +2,220 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\DTO;
 
-use App\Repository\EventRepository;
-use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Bridge\Doctrine\Types\UuidType;
+use App\Entity\Event;
+use App\Entity\PostalAddress;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\String\Slugger\AsciiSlugger;
-use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: EventRepository::class)]
-#[UniqueEntity('slug')]
 #[Assert\Expression(
     'this.getStartAt() < this.getEndAt()',
     message: 'La date de début doit être inférieure à la date de fin'
 )]
-class Event
+// #[UniqueEntity(
+//     'slug',
+//     entityClass: Event::class,
+// )]
+class EventValidationDTO
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
-
-    #[Assert\Uuid()]
-    #[ORM\Column(type: UuidType::NAME, unique: true)]
-    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
-    private ?Uuid $uuid = null;
-
-    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $title = null;
 
     #[Assert\NotBlank]
-    #[ORM\Column(length: 255)]
     private ?string $link = null;
 
-    #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
     #[Assert\NotBlank]
-    #[ORM\Column]
     private ?\DateTimeImmutable $startAt = null;
 
-    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $endAt = null;
 
-    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private ?string $organizer = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+
+    private ?PostalAddress $location = null;
 
     #[Assert\NotBlank]
     #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
-    #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
-    #[ORM\ManyToOne(inversedBy: 'events')]
-    private ?PostalAddress $location = null;
-
-    public function __construct()
+    public function toEntity(): Event
     {
-        $this->uuid = Uuid::v6();
+        $event = (new Event())
+            ->setTitle($this->title)
+            ->setLink($this->link)
+            ->setDescription($this->description)
+            ->setStartAt($this->startAt)
+            ->setEndAt($this->endAt)
+            ->setOrganizer($this->organizer)
+            ->setImage($this->image)
+            ->setLocation($this->location)
+            ->setSlug($this->slug);
+
+        return $event;
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUuid(): ?Uuid
-    {
-        return $this->uuid;
-    }
-
+    /**
+     * Get the value of title.
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    /**
+     * Set the value of title.
+     */
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
+    /**
+     * Get the value of link.
+     */
     public function getLink(): ?string
     {
         return $this->link;
     }
 
-    public function setLink(string $link): static
+    /**
+     * Set the value of link.
+     */
+    public function setLink(?string $link): self
     {
         $this->link = $link;
 
         return $this;
     }
 
+    /**
+     * Get the value of description.
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    /**
+     * Set the value of description.
+     */
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
+    /**
+     * Get the value of startAt.
+     */
     public function getStartAt(): ?\DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    public function setStartAt(\DateTimeImmutable $startAt): static
+    /**
+     * Set the value of startAt.
+     */
+    public function setStartAt(?\DateTimeImmutable $startAt): self
     {
         $this->startAt = $startAt;
 
         return $this;
     }
 
+    /**
+     * Get the value of endAt.
+     */
     public function getEndAt(): ?\DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    public function setEndAt(\DateTimeImmutable $endAt): static
+    /**
+     * Set the value of endAt.
+     */
+    public function setEndAt(?\DateTimeImmutable $endAt): self
     {
         $this->endAt = $endAt;
 
         return $this;
     }
 
+    /**
+     * Get the value of organizer.
+     */
     public function getOrganizer(): ?string
     {
         return $this->organizer;
     }
 
-    public function setOrganizer(string $organizer): static
+    /**
+     * Set the value of organizer.
+     */
+    public function setOrganizer(?string $organizer): self
     {
         $this->organizer = $organizer;
 
         return $this;
     }
 
+    /**
+     * Get the value of image.
+     */
     public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    /**
+     * Set the value of image.
+     */
+    public function setImage(?string $image): self
     {
         $this->image = $image;
 
         return $this;
     }
 
+    /**
+     * Get the value of location.
+     */
+    public function getLocation(): ?PostalAddress
+    {
+        return $this->location;
+    }
+
+    /**
+     * Set the value of location.
+     */
+    public function setLocation(?PostalAddress $location): self
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of slug.
+     */
     public function getSlug(): ?string
     {
         return $this->slug;
     }
 
-    public function setSlug(string $slug): static
+    /**
+     * Set the value of slug.
+     */
+    public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
 
@@ -179,18 +227,6 @@ class Event
         $slugger = new AsciiSlugger();
         $slug = $slugger->slug($this->organizer.'-'.$slug)->lower()->toString();
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function getLocation(): ?PostalAddress
-    {
-        return $this->location;
-    }
-
-    public function setLocation(?PostalAddress $location): static
-    {
-        $this->location = $location;
 
         return $this;
     }

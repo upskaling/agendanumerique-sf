@@ -2,30 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Compil;
+namespace App\EventRetrieval;
 
-use App\Entity\Event;
-use App\Repository\EventRepository;
+use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class CompilPwn implements CompilInterface
+class EventRetrievalPwn implements EventRetrievalInterface
 {
     private const URI = 'https://pwn-association.org';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly EventRepository $eventRepository,
-        private readonly ValidatorInterface $validation,
         private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
 
-    public function compil(): void
+    public function retrieveEvents(): array
     {
         $response = $this->httpClient->request(
             'GET',
@@ -37,15 +31,13 @@ class CompilPwn implements CompilInterface
         $crawler = new Crawler($content);
 
         // .upcoming-events .event-inner>a
-        $crawler->filter('.upcoming-events .event-inner>a')
+        return $crawler->filter('.upcoming-events .event-inner>a')
             ->each(function (Crawler $event) {
                 $link = $event->attr('href');
                 if (null !== $link) {
-                    $this->loadEvent($link);
+                    return $this->loadEvent($link);
                 }
             });
-
-        $this->entityManager->flush();
     }
 
     private function convertDate(string $date): \DateTimeImmutable|false
@@ -62,15 +54,10 @@ class CompilPwn implements CompilInterface
         );
     }
 
-    private function loadEvent(string $link): void
+    private function loadEvent(string $link): EventValidationDTO
     {
         $organizer = 'pwn';
         $url = self::URI.$link;
-
-        // si % $link % existe déjà dans la base de données, on ne fait rien
-        if ($this->eventRepository->isLinkExist($link)) {
-            return;
-        }
 
         $response = $this->httpClient->request(
             'GET',
@@ -80,7 +67,7 @@ class CompilPwn implements CompilInterface
         $content = $response->getContent();
 
         $crawler = new Crawler($content);
-        $event = new Event();
+        $event = new EventValidationDTO();
 
         $event->setOrganizer($organizer);
 
@@ -119,20 +106,16 @@ class CompilPwn implements CompilInterface
         // on explode
         $dateText = explode(' – ', $dateText);
 
-        $endAt = $this->convertDate($dateText[0]);
-        if ($endAt) {
-            $event->setEndAt($endAt);
-        }
-        $startAt = $this->convertDate($dateText[1]);
+        $startAt = $this->convertDate($dateText[0]);
         if ($startAt) {
             $event->setStartAt($startAt);
         }
 
-        // validation
-        $errors = $this->validation->validate($event);
-
-        if (0 === \count($errors)) {
-            $this->entityManager->persist($event);
+        $endAt = $this->convertDate($dateText[1]);
+        if ($endAt) {
+            $event->setEndAt($endAt);
         }
+
+        return $event;
     }
 }
