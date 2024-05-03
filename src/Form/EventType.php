@@ -21,6 +21,7 @@ class EventType extends AbstractType
             ->add('endAt')
             ->add('organizer')
             ->add('image')
+            ->add('location')
         ;
     }
 

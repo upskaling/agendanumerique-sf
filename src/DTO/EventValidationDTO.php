@@ -11,7 +11,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Assert\Expression(
-    'this.getStartAt() < this.getEndAt()',
+    'this.getStartAt() < this.getEndAt() or !this.getEndAt()',
     message: 'La date de début doit être inférieure à la date de fin'
 )]
 // #[UniqueEntity(

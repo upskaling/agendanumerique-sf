@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: EventRepository::class)]
 #[UniqueEntity('slug')]
 #[Assert\Expression(
-    'this.getStartAt() < this.getEndAt()',
+    'this.getStartAt() < this.getEndAt() or !this.getEndAt()',
     message: 'La date de début doit être inférieure à la date de fin'
 )]
 class Event
@@ -27,7 +27,6 @@ class Event
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\Uuid()]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $uuid = null;
@@ -52,6 +51,7 @@ class Event
     #[ORM\Column(length: 255)]
     private ?string $organizer = null;
 
+    #[Assert\Url]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
@@ -131,7 +131,7 @@ class Event
         return $this->endAt;
     }
 
-    public function setEndAt(\DateTimeImmutable $endAt): static
+    public function setEndAt(?\DateTimeImmutable $endAt): static
     {
         $this->endAt = $endAt;
 

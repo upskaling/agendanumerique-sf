@@ -45,4 +45,18 @@ class EventTest extends KernelTestCase
 
         $this->assertCount(1, $errors);
     }
+
+    // testé avec une date de fin vide
+    public function testDateEmpty(): void
+    {
+        $event = (new Event())
+            ->setStartAt(new \DateTimeImmutable('2021-01-01 10:00:00'))
+            ->setEndAt(null)
+            ->setSlugWithOrganizer('foo')
+            ->setLink('foo');
+
+        $errors = $this->validator->validate($event);
+
+        $this->assertCount(0, $errors);
+    }
 }
