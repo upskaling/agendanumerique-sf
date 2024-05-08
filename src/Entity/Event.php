@@ -63,6 +63,9 @@ class Event
     #[ORM\ManyToOne(inversedBy: 'events')]
     private ?PostalAddress $location = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $published = null;
+
     public function __construct()
     {
         $this->uuid = Uuid::v6();
@@ -191,6 +194,18 @@ class Event
     public function setLocation(?PostalAddress $location): static
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function getPublished(): ?\DateTimeImmutable
+    {
+        return $this->published;
+    }
+
+    public function setPublished(\DateTimeImmutable $published): static
+    {
+        $this->published = $published;
 
         return $this;
     }

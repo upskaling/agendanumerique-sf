@@ -47,6 +47,7 @@ class CompilCommand extends Command
             $eventValidationDTOList = array_merge($eventValidationDTOList, $compil->retrieveEvents());
         }
 
+        /** @var EventValidationDTO $eventValidationDTO */
         foreach ($eventValidationDTOList as $eventValidationDTO) {
             $errors = $this->validation->validate($eventValidationDTO);
 
@@ -62,6 +63,7 @@ class CompilCommand extends Command
             if (0 !== \count($errors)) {
                 continue;
             }
+            $event->setPublished(new \DateTimeImmutable());
 
             $this->entityManager->persist($event);
 
