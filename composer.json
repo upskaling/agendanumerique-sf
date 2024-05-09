@@ -1,4 +1,6 @@
 {
+    "name": "upskaling/agendanumerique-sf",
+    "description": "Agenda du numérique à Poitiers et ses environs",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
