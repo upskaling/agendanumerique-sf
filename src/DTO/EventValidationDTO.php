@@ -6,7 +6,7 @@ namespace App\DTO;
 
 use App\Entity\Event;
 use App\Entity\PostalAddress;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+// use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -36,26 +36,68 @@ class EventValidationDTO
     #[Assert\NotBlank]
     private ?string $organizer = null;
 
+    #[Assert\Url]
     private ?string $image = null;
 
     private ?PostalAddress $location = null;
 
-    #[Assert\NotBlank]
     #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
     private ?string $slug = null;
 
+    public function __construct()
+    {
+        $this->startAt = new \DateTimeImmutable();
+    }
+
     public function toEntity(): Event
     {
-        $event = (new Event())
-            ->setTitle($this->title)
-            ->setLink($this->link)
-            ->setDescription($this->description)
-            ->setStartAt($this->startAt)
-            ->setEndAt($this->endAt)
-            ->setOrganizer($this->organizer)
-            ->setImage($this->image)
-            ->setLocation($this->location)
-            ->setSlug($this->slug);
+        $event = new Event();
+
+        $title = $this->getTitle();
+        if ($title) {
+            $event->setTitle($title);
+            $event->setSlugWithOrganizer($title);
+        }
+
+        $link = $this->getLink();
+        if ($link) {
+            $event->setLink($link);
+        }
+
+        $description = $this->getDescription();
+        if ($description) {
+            $event->setDescription($description);
+        }
+
+        $startAt = $this->getStartAt();
+        if ($startAt) {
+            $event->setStartAt($startAt);
+        }
+
+        $endAt = $this->getEndAt();
+        if ($endAt) {
+            $event->setEndAt($endAt);
+        }
+
+        $organizer = $this->getOrganizer();
+        if ($organizer) {
+            $event->setOrganizer($organizer);
+        }
+
+        $image = $this->getImage();
+        if ($image) {
+            $event->setImage($image);
+        }
+
+        $location = $this->getLocation();
+        if ($location) {
+            $event->setLocation($location);
+        }
+
+        $slug = $this->getSlug();
+        if ($slug) {
+            $event->setSlug($slug);
+        }
 
         return $event;
     }

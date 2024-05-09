@@ -28,11 +28,25 @@
                 </a>
             </header>
 
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                <div class="text-center">
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+
             <main class="container">
                 {% block main %}{% endblock %}
             </main>
 
             <footer class="text-center">
+
+                <a href="{{ path('app_event_propose_new') }}">Proposer un événement</a>
+
+                <hr>
         
                 <a href="{{ path('app_event_feed') }}"><twig:ux:icon name="bi:rss-fill" height="28" width="28" aria-label="flux RSS" /></a>
 

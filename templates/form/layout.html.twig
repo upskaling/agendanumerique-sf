@@ -1,0 +1,11 @@
+{% use "form_div_layout.html.twig" %}
+
+
+{%- block widget_attributes -%}
+    id="{{ id }}" name="{{ full_name }}"
+    {%- if disabled %} disabled="disabled"{% endif -%}
+    {%- if required %} required="required"{% endif -%}
+    {%- if errors|length > 0 %} aria-invalid="true"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock widget_attributes -%}
+

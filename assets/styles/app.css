@@ -1,7 +1,3 @@
-/* body {
-    background-color: skyblue;
-} */
-
 .container {
   margin-bottom: 50px;
 }
@@ -24,4 +20,9 @@
   .grid {
     grid-template-columns: 1fr 1fr 1fr;
   }
+}
+
+.flash-success {
+  background-color: rgba(227, 255, 192, 0.9);
+  margin-bottom: 24px;
 }
