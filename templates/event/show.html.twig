@@ -23,35 +23,35 @@
         {# <iframe sandbox seamless srcdoc="<html />"></iframe> #}
         <div>{{ event.description|sanitize_html }}</div>
 
-        <hr>
-
-        {% if event.startAt %}
-        <p>
-            <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" />
-            : <time datetime="{{ event.startAt|date('Y-m-d\\Th:i:s', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short') }}</time>
-        </p>
-        {% endif %}
-        {% if event.location %}
-        <address>
-            <twig:ux:icon name="bi:pin-map" height="28" width="28" aria-label="location" />
-            {# <a href="geo:{{ event.location.latitude }},{{ event.location.longitude }}">{{ event.location }}</a> #}
-            : {{ event.location }}
-        </address>
-        {% endif %}
-        <p>
-            <twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" />
-            : {{ event.organizer }}
-        </p>
-        <p>
-            <twig:ux:icon name="bi:link-45deg" height="28" width="28" aria-label="source"/>
-            : <a href="{{ event.link }}">{{ event.link }}</a>
-        </p>
-        <p>
-            <twig:ux:icon name="bi:calendar-event" height="28" width="28" aria-label=""/>
-            : <a href="{{ path('app_event_show_slug_ics', {'slug': event.slug}) }}" data-turbo="false">
-                Télécharger Event au format ics
-            </a>
-        </p>
+        <footer>
+            {% if event.startAt %}
+            <p>
+                <twig:ux:icon name="bi:clock" height="28" width="28" aria-label="date de débu" />
+                : <time datetime="{{ event.startAt|date('Y-m-d\\Th:i:s', timezone='GMT') }}" >{{ event.startAt|format_datetime('medium', 'short') }}</time>
+            </p>
+            {% endif %}
+            {% if event.location %}
+            <address>
+                <twig:ux:icon name="bi:pin-map" height="28" width="28" aria-label="location" />
+                {# <a href="geo:{{ event.location.latitude }},{{ event.location.longitude }}">{{ event.location }}</a> #}
+                : {{ event.location }}
+            </address>
+            {% endif %}
+            <p>
+                <twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" />
+                : {{ event.organizer }}
+            </p>
+            <p>
+                <twig:ux:icon name="bi:link-45deg" height="28" width="28" aria-label="source"/>
+                : <a href="{{ event.link }}">{{ event.link }}</a>
+            </p>
+            <p>
+                <twig:ux:icon name="bi:calendar-event" height="28" width="28" aria-label=""/>
+                : <a href="{{ path('app_event_show_slug_ics', {'slug': event.slug}) }}" data-turbo="false">
+                    Télécharger Event au format ics
+                </a>
+            </p>
+        </footer>
     </article>
  
     {% if is_granted('ROLE_ADMIN') %}
