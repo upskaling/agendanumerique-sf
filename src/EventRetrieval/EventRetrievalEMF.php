@@ -58,7 +58,7 @@ class EventRetrievalEMF implements EventRetrievalInterface
     private function convertDate(string $date): \DateTimeImmutable|false
     {
         $date = str_replace(
-            ['jan.', 'fév.', 'mars', 'avril', 'mai', 'juin', 'juil', 'aou', 'sep', 'oct.', 'nov.', 'déc.'],
+            ['jan.', 'fév.', 'mars', 'avril', 'mai', 'juin', 'juil', 'août', 'sep', 'oct.', 'nov.', 'déc.'],
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
             $date
         );
