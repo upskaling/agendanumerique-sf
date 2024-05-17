@@ -35,6 +35,9 @@ class PostalAddress
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $addressCountry = null;
 
+    /**
+     * @var Collection<int, Event>
+     */
     #[ORM\OneToMany(mappedBy: 'location', targetEntity: Event::class)]
     private Collection $events;
 

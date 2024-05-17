@@ -1,0 +1,46 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$description type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$link type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$organizer type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$slug type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$startAt type mapping mismatch\\: property can contain DateTimeImmutable\\|null but database expects DateTimeImmutable\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\Event\\:\\:\\$title type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/Event.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\PostalAddress\\:\\:\\$name type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/PostalAddress.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\User\\:\\:\\$email type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: "#^Property App\\\\Entity\\\\User\\:\\:\\$password type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
+			count: 1
+			path: src/Entity/User.php
