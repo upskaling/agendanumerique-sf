@@ -12,7 +12,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
@@ -25,7 +25,7 @@ class CompilCommand extends Command
      * @param iterable<EventRetrievalInterface> $compils
      */
     public function __construct(
-        #[TaggedIterator('app.EventRetrieval')]
+        #[AutowireIterator('app.EventRetrieval')]
         private readonly iterable $compils,
         private readonly EntityManagerInterface $entityManager,
         private readonly ValidatorInterface $validation,
