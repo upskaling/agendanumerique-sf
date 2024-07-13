@@ -24,16 +24,29 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param array<int> $selection
+     *
      * @return array<Event>
      */
-    public function findLatest(): array
-    {
+    public function findLatest(
+        ?array $selection
+    ): array {
+        $qb = $this->createQueryBuilder('e')
+        ->where('e.startAt >= :now')
+        ->setParameter('now', new \DateTime())
+        ->andWhere('e.published IS NOT NULL')
+        ->orderBy('e.startAt', 'ASC')
+        ;
+
+        if (null !== $selection) {
+            $qb
+            ->andWhere('e.location IN (:selection)')
+            ->setParameter('selection', $selection)
+            ;
+        }
+
         /** @var Event[] $result */
-        $result = $this->createQueryBuilder('e')
-            ->where('e.startAt >= :now')
-            ->setParameter('now', new \DateTime())
-            ->andWhere('e.published IS NOT NULL')
-            ->orderBy('e.startAt', 'ASC')
+        $result = $qb
             ->getQuery()
             ->getResult();
 

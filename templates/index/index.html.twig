@@ -4,7 +4,7 @@
 
     <div class="grid">
         {% for event in events %}
-        <article>
+        <article class="event-card">
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
                 {% if event.image %}
                 <div class="text-center">

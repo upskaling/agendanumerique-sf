@@ -29,10 +29,14 @@ class EventController extends AbstractController
 
     #[Route('/feed.xml', name: 'app_event_feed', methods: ['GET'])]
     public function indexFeed(
+        Request $request,
         EventRepository $eventRepository,
     ): Response {
+        /** @var int[] $selection */
+        $selection = $request->get('selection');
+
         return $this->render('event/index.xml.twig', [
-            'events' => $eventRepository->findLatest(),
+            'events' => $eventRepository->findLatest($selection),
         ]);
     }
 

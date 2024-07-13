@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Filtrer les événements{% endblock %}
+
+{% block main %}
+
+    <section>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button>Generate les url</button>
+        {{ form_end(form) }}
+    </section>
+
+    {% if selection_abonnement_dto.subscription %}
+    <section>
+        <a href="{{ path('app_index', {'selection': selection_abonnement_dto.subscription}) }}"><twig:ux:icon name="bi:hand-index" height="28" width="28" /> index</a><br>
+        <a href="{{ path('app_event_feed', {'selection': selection_abonnement_dto.subscription}) }}"><twig:ux:icon name="bi:rss-fill" height="28" width="28" aria-label="flux RSS" /> feed</a><br>
+        <a href="{{ path('app_event_ics', {'selection': selection_abonnement_dto.subscription}) }}"><twig:ux:icon name="bi:calendar3" height="28" width="28" aria-label="flux Calendar" /> ics</a><br>
+    </section>
+    {% endif %}
+
+{% endblock %}

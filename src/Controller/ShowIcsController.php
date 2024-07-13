@@ -8,6 +8,7 @@ use App\Entity\Event;
 use App\Repository\EventRepository;
 use App\Utils\CalendarGeneratorIcs;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,11 +34,15 @@ class ShowIcsController extends AbstractController
 
     #[Route('/event.ics', name: 'app_event_ics', methods: ['GET'])]
     public function eventIcs(
+        Request $request,
         EventRepository $eventRepository,
         CalendarGeneratorIcs $calendarGeneratorIcs
     ): Response {
+        /** @var int[] $selection */
+        $selection = $request->get('selection');
+
         $calendarExport = $calendarGeneratorIcs->getCalendar(
-            $eventRepository->findLatest()
+            $eventRepository->findLatest($selection)
         );
 
         return new Response(
