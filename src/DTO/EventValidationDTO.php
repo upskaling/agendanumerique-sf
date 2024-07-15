@@ -21,10 +21,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class EventValidationDTO
 {
     #[Assert\NotBlank]
-    private ?string $title = null;
+    private string $title;
 
     #[Assert\NotBlank]
-    private ?string $link = null;
+    private string $link;
 
     private ?string $description = null;
 
@@ -34,7 +34,7 @@ class EventValidationDTO
     private ?\DateTimeImmutable $endAt = null;
 
     #[Assert\NotBlank]
-    private ?string $organizer = null;
+    private string $organizer;
 
     #[Assert\Url]
     private ?string $image = null;
@@ -44,8 +44,10 @@ class EventValidationDTO
     #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
     private ?string $slug = null;
 
-    public function __construct()
-    {
+    public function __construct(
+        #[Assert\NotBlank]
+        public string $source,
+    ) {
         $this->startAt = new \DateTimeImmutable();
     }
 
@@ -53,50 +55,55 @@ class EventValidationDTO
     {
         $event = new Event();
 
-        $title = $this->getTitle();
+        $title = $this->title;
         if ($title) {
             $event->setTitle($title);
             $event->setSlugWithOrganizer($title);
         }
 
-        $link = $this->getLink();
+        $link = $this->link;
         if ($link) {
             $event->setLink($link);
         }
 
-        $description = $this->getDescription();
+        $description = $this->description;
         if ($description) {
             $event->setDescription($description);
         }
 
-        $startAt = $this->getStartAt();
+        $startAt = $this->startAt;
         if ($startAt) {
             $event->setStartAt($startAt);
         }
 
-        $endAt = $this->getEndAt();
+        $endAt = $this->endAt;
         if ($endAt) {
             $event->setEndAt($endAt);
         }
 
-        $organizer = $this->getOrganizer();
+        $organizer = $this->organizer;
         if ($organizer) {
             $event->setOrganizer($organizer);
         }
 
-        $image = $this->getImage();
+        $image = $this->image;
         if ($image) {
             $event->setImage($image);
         }
 
-        $location = $this->getLocation();
+        $location = $this->location;
         if ($location) {
             $event->setLocation($location);
         }
 
-        $slug = $this->getSlug();
+        $slug = $this->slug;
         if ($slug) {
             $event->setSlug($slug);
+        }
+
+        $source = $this->source;
+        if ($source) {
+            $event->setSource($source);
         }
 
         return $event;
@@ -113,7 +120,7 @@ class EventValidationDTO
     /**
      * Set the value of title.
      */
-    public function setTitle(?string $title): self
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -131,7 +138,7 @@ class EventValidationDTO
     /**
      * Set the value of link.
      */
-    public function setLink(?string $link): self
+    public function setLink(string $link): self
     {
         $this->link = $link;
 
@@ -203,7 +210,7 @@ class EventValidationDTO
     /**
      * Set the value of organizer.
      */
-    public function setOrganizer(?string $organizer): self
+    public function setOrganizer(string $organizer): self
     {
         $this->organizer = $organizer;
 

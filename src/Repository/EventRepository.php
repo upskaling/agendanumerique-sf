@@ -24,12 +24,12 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param array<int> $selection
+     * @param array<int> $source
      *
      * @return array<Event>
      */
     public function findLatest(
-        ?array $selection
+        ?array $source
     ): array {
         $qb = $this->createQueryBuilder('e')
         ->where('e.startAt >= :now')
@@ -38,10 +38,23 @@ class EventRepository extends ServiceEntityRepository
         ->orderBy('e.startAt', 'ASC')
         ;
 
-        if (null !== $selection) {
+        if (null !== $source) {
+            $sourceList = [
+                1 => 'cobaltpoitiers',
+                2 => 'pwn',
+                3 => 'emf',
+            ];
+
+            $source = array_map(
+                function ($id) use ($sourceList) {
+                    return $sourceList[$id] ?? null;
+                },
+                $source
+            );
+
             $qb
-            ->andWhere('e.location IN (:selection)')
-            ->setParameter('selection', $selection)
+                ->andWhere('e.source IN (:source)')
+                ->setParameter('source', $source)
             ;
         }
 

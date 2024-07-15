@@ -12,6 +12,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class EventRetrievalPwn implements EventRetrievalInterface
 {
     private const URI = 'https://pwn-association.org';
+    private const NAME = 'pwn';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -67,7 +68,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $content = $response->getContent();
 
         $crawler = new Crawler($content);
-        $event = new EventValidationDTO();
+        $event = new EventValidationDTO(self::NAME);
 
         $event->setOrganizer($organizer);
 

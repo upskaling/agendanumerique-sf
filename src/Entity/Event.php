@@ -32,24 +32,24 @@ class Event
     private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private string $title;
 
     #[Assert\NotBlank]
     #[ORM\Column(length: 255)]
-    private ?string $link = null;
+    private string $link;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $description = null;
+    private string $description;
 
     #[Assert\NotBlank]
     #[ORM\Column]
-    private ?\DateTimeImmutable $startAt = null;
+    private \DateTimeImmutable $startAt;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $endAt = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $organizer = null;
+    private string $organizer;
 
     #[Assert\Url]
     #[ORM\Column(length: 255, nullable: true)]
@@ -58,13 +58,16 @@ class Event
     #[Assert\NotBlank]
     #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
     #[ORM\Column(length: 255, unique: true)]
-    private ?string $slug = null;
+    private string $slug;
 
     #[ORM\ManyToOne(inversedBy: 'events')]
     private ?PostalAddress $location = null;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $published = null;
+
+    #[ORM\Column(length: 255)]
+    private string $source;
 
     public function __construct()
     {
@@ -206,6 +209,18 @@ class Event
     public function setPublished(\DateTimeImmutable $published): static
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    public function getSource(): string
+    {
+        return $this->source;
+    }
+
+    public function setSource(string $source): static
+    {
+        $this->source = $source;
 
         return $this;
     }

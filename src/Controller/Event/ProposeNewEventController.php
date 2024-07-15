@@ -19,7 +19,8 @@ class ProposeNewEventController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
     ): Response {
-        $eventValidationDTO = new EventValidationDTO();
+        $eventValidationDTO = new EventValidationDTO('propose-new');
+
         $form = $this->createForm(ProposeNewType::class, $eventValidationDTO);
 
         $form->handleRequest($request);

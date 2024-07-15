@@ -13,6 +13,7 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class EventRetrievalEMF implements EventRetrievalInterface
 {
     private const URI = 'https://emf.fr';
+    private const NAME = 'emf';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -94,7 +95,7 @@ class EventRetrievalEMF implements EventRetrievalInterface
         } catch (\InvalidArgumentException $e) {
         }
 
-        $event = new EventValidationDTO();
+        $event = new EventValidationDTO(self::NAME);
 
         $event->setOrganizer($organizer);
 

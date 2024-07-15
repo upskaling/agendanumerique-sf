@@ -13,6 +13,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
 {
     private const URI = 'https://www.cobaltpoitiers.fr';
+    private const NAME = 'cobaltpoitiers';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -41,7 +42,7 @@ class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
 
     private function loadEvent(Crawler $crawler): EventValidationDTO
     {
-        $event = new EventValidationDTO();
+        $event = new EventValidationDTO(self::NAME);
         $organizer = $crawler->filter('span:contains("Organisateur :")')->text();
         $organizer = explode('Organisateur : ', $organizer)[1];
         $event->setOrganizer($organizer);
