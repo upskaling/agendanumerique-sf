@@ -58,7 +58,9 @@ class EventValidationDTO
         $title = $this->title;
         if ($title) {
             $event->setTitle($title);
-            $event->setSlugWithOrganizer($title);
+            $slugger = new AsciiSlugger();
+            $slug = $slugger->slug($this->organizer.'-'.$title)->lower()->toString();
+            $event->setSlug($slug);
         }
 
         $link = $this->link;
@@ -266,15 +268,6 @@ class EventValidationDTO
      */
     public function setSlug(?string $slug): self
     {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function setSlugWithOrganizer(string $slug): static
-    {
-        $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($this->organizer.'-'.$slug)->lower()->toString();
         $this->slug = $slug;
 
         return $this;

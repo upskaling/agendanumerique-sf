@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -175,15 +174,6 @@ class Event
 
     public function setSlug(string $slug): static
     {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    public function setSlugWithOrganizer(string $slug): static
-    {
-        $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($this->organizer.'-'.$slug)->lower()->toString();
         $this->slug = $slug;
 
         return $this;

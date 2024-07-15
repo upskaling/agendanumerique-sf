@@ -7,6 +7,7 @@ namespace App\EventRetrieval;
 use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
@@ -105,7 +106,9 @@ class EventRetrievalEMF implements EventRetrievalInterface
 
         $title = $crawler->filter('h1.elementor-heading-title')->text();
         $event->setTitle($title);
-        $event->setSlugWithOrganizer($title);
+        $slugger = new AsciiSlugger();
+        $slug = $slugger->slug($organizer.'-'.$title)->lower()->toString();
+        $event->setSlug($title);
 
         $url = $crawler->filter("meta[property='og:url']")->attr('content');
         if ($url) {

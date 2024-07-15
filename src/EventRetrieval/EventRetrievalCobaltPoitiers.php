@@ -8,6 +8,7 @@ use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
@@ -64,7 +65,9 @@ class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
             );
         }
 
-        $event->setSlugWithOrganizer($title);
+        $slugger = new AsciiSlugger();
+        $slug = $slugger->slug($organizer.'-'.$title)->lower()->toString();
+        $event->setSlug($slug);
 
         $description = $crawler->filter('.inscription')->html();
         $event->setDescription($description);

@@ -24,7 +24,7 @@ class EventTest extends KernelTestCase
         $event = (new Event())
             ->setStartAt(new \DateTimeImmutable('2021-01-01 10:00:00'))
             ->setEndAt(new \DateTimeImmutable('2021-01-01 11:00:00'))
-            ->setSlugWithOrganizer('foo')
+            ->setSlug('foo')
             ->setLink('foo');
 
         $errors = $this->validator->validate($event);
@@ -38,7 +38,7 @@ class EventTest extends KernelTestCase
         $event = (new Event())
             ->setStartAt(new \DateTimeImmutable('2021-01-01 11:00:00'))
             ->setEndAt(new \DateTimeImmutable('2021-01-01 10:00:00'))
-            ->setSlugWithOrganizer('foo')
+            ->setSlug('foo')
             ->setLink('foo');
 
         $errors = $this->validator->validate($event);
@@ -52,7 +52,7 @@ class EventTest extends KernelTestCase
         $event = (new Event())
             ->setStartAt(new \DateTimeImmutable('2021-01-01 10:00:00'))
             ->setEndAt(null)
-            ->setSlugWithOrganizer('foo')
+            ->setSlug('foo')
             ->setLink('foo');
 
         $errors = $this->validator->validate($event);
