@@ -98,14 +98,11 @@ class EventRetrievalEMF implements EventRetrievalInterface
 
         $event->setOrganizer($organizer);
 
-        $lieu = $crawler->filter('.info_lieu b')->text();
         $lieuName = 'Espace Mendès France';
-        if (str_contains($lieu, $lieuName)) {
-            $location = $this->postalAddressRepository->findOneBy(['name' => $lieuName]);
-            $event->setLocation($location);
-        }
+        $location = $this->postalAddressRepository->findOneBy(['name' => $lieuName]);
+        $event->setLocation($location);
 
-        $title = $crawler->filter('.hero-title-inside-text h1')->text();
+        $title = $crawler->filter('h1.elementor-heading-title')->text();
         $event->setTitle($title);
         $event->setSlugWithOrganizer($title);
 
@@ -114,8 +111,8 @@ class EventRetrievalEMF implements EventRetrievalInterface
             $event->setLink($url);
         }
 
-        $image = $crawler->filter("meta[property='og:image']")->attr('content');
-        if ($image) {
+        $image = $crawler->filter("meta[property='og:image']")->attr('content', '');
+        if ('' !== $image) {
             $event->setImage($image);
         }
 
