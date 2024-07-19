@@ -35,9 +35,13 @@ class EventController extends AbstractController
         /** @var int[] $selection */
         $selection = $request->get('selection');
 
-        return $this->render('event/index.xml.twig', [
+        $response = $this->render('event/index.xml.twig', [
             'events' => $eventRepository->findLatest($selection),
         ]);
+
+        $response->headers->set('Content-Type', 'application/xml');
+
+        return $response;
     }
 
     #[Route('/new', name: 'app_event_new', methods: ['GET', 'POST'])]
