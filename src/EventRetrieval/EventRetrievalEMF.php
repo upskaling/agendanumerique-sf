@@ -27,16 +27,16 @@ class EventRetrievalEMF implements EventRetrievalInterface
      */
     public function getUrl(): iterable
     {
-        yield $this::URI.'/ec3_event/une-ia-massiste-pour-creer-mon-site-web/';
-        yield $this::URI.'/ec3_event/creer-un-chatbot-avec-scratch/';
-        yield $this::URI.'/ec3_event/mon-premier-jeu-video-pac-man/';
-        yield $this::URI.'/ec3_event/mon-premier-jeu-video-la-bataille-des-planetes/';
-        yield $this::URI.'/ec3_event/brickanoid-gare-aux-briques/';
-        yield $this::URI.'/ec3_event/mon-premier-jeu-video-ninja-fruits/';
-        yield $this::URI.'/ec3_event/la-chasse-aux-aliens-commence/';
-        yield $this::URI.'/ec3_event/mon-premier-jeu-video-les-fous-du-volant/';
-        yield $this::URI.'/ec3_event/mon-premier-jeu-video-snake-le-serpent-qui-se-mord-la-queue/';
-        yield $this::URI.'/ec3_event/je-debute-avec-chatgpt/';
+        yield $this::URI.'/event/une-ia-massiste-pour-creer-mon-site-web/';
+        yield $this::URI.'/event/creer-un-chatbot-avec-scratch/';
+        yield $this::URI.'/event/mon-premier-jeu-video-pac-man/';
+        yield $this::URI.'/event/mon-premier-jeu-video-la-bataille-des-planetes/';
+        yield $this::URI.'/event/brickanoid-gare-aux-briques/';
+        yield $this::URI.'/event/mon-premier-jeu-video-ninja-fruits/';
+        yield $this::URI.'/event/la-chasse-aux-aliens-commence/';
+        yield $this::URI.'/event/mon-premier-jeu-video-les-fous-du-volant/';
+        yield $this::URI.'/event/mon-premier-jeu-video-snake-le-serpent-qui-se-mord-la-queue/';
+        yield $this::URI.'/event/je-debute-avec-chatgpt/';
     }
 
     public function retrieveEvents(): array
