@@ -20,6 +20,7 @@ class SelectionAbonnementType extends AbstractType
                     'Cobalt Poitiers' => 1,
                     'PWN' => 2,
                     'EMF' => 3,
+                    'Afup Poitiers' => 4,
                 ],
                 'expanded' => true,
                 'multiple' => true,

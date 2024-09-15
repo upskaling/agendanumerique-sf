@@ -29,7 +29,7 @@ class EventRepository extends ServiceEntityRepository
      * @return array<Event>
      */
     public function findLatest(
-        ?array $source
+        ?array $source,
     ): array {
         $qb = $this->createQueryBuilder('e')
         ->where('e.startAt >= :now')
@@ -43,6 +43,7 @@ class EventRepository extends ServiceEntityRepository
                 1 => 'cobaltpoitiers',
                 2 => 'pwn',
                 3 => 'emf',
+                4 => 'afup-poitiers',
             ];
 
             $source = array_map(
