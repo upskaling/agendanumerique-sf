@@ -114,9 +114,11 @@ class EventRetrievalPwn implements EventRetrievalInterface
             $event->setStartAt($startAt);
         }
 
-        $endAt = $this->convertDate($dateText[1]);
-        if ($endAt) {
-            $event->setEndAt($endAt);
+        if (\count($dateText) > 1) {
+            $endAt = $this->convertDate($dateText[1]);
+            if ($endAt) {
+                $event->setEndAt($endAt);
+            }
         }
 
         return $event;
