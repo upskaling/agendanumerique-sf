@@ -36,7 +36,7 @@ class ShowIcsController extends AbstractController
     public function eventIcs(
         Request $request,
         EventRepository $eventRepository,
-        CalendarGeneratorIcs $calendarGeneratorIcs
+        CalendarGeneratorIcs $calendarGeneratorIcs,
     ): Response {
         /** @var int[] $selection */
         $selection = $request->get('selection');

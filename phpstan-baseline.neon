@@ -1,16 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: "#^Property App\\\\Entity\\\\PostalAddress\\:\\:\\$name type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
-			count: 1
-			path: src/Entity/PostalAddress.php
-
-		-
-			message: "#^Property App\\\\Entity\\\\User\\:\\:\\$email type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
-			count: 1
-			path: src/Entity/User.php
-
-		-
-			message: "#^Property App\\\\Entity\\\\User\\:\\:\\$password type mapping mismatch\\: property can contain string\\|null but database expects string\\.$#"
-			count: 1
-			path: src/Entity/User.php
+	ignoreErrors: []
