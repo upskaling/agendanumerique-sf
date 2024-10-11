@@ -23,7 +23,7 @@ class EventController extends AbstractController
         EventRepository $eventRepository,
     ): Response {
         return $this->render('event/index.html.twig', [
-            'events' => $eventRepository->findAll(),
+            'events' => array_reverse($eventRepository->findAll()),
         ]);
     }
 
