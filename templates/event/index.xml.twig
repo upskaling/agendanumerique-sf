@@ -10,7 +10,7 @@
         {% for event in events %}
         <item>
             <title><![CDATA[{{ event.title }}]]></title>
-            <link>{{ event.link }}</link>
+            <link>{{ url('app_event_show_slug', {'slug': event.slug}) }}</link>
             <guid>{{ event.link }}</guid>
             <pubDate>{{ event.startAt|date(format='r', timezone='GMT') }} </pubDate>
             {% if event.image %}<enclosure url="{{ event.image }}" length="0" type="image/png" loading="lazy"/>{% endif %}

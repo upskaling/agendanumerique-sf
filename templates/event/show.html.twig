@@ -2,7 +2,11 @@
 
 {% block title %}{{ event.title }} - {{ parent() }}{% endblock %}
 
-{% block meta %}
+{% block meta ~%}
+    <link rel="canonical" href="{{ path('app_event_show_slug', {'slug': event.slug}) }}" />
+    {%- if event.published is null ~%}
+    <meta name="robots" content="noindex, nofollow, noreferrer" />
+    {%- endif ~%}
     <meta property="og:title" content="{{ event.title }}" />
     {% if event.image -%}
     <meta property="og:image" content="{{ event.image }}" />
