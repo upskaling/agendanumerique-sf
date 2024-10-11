@@ -12,28 +12,18 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Title</th>
-                {# <th>Link</th> #}
-                {# <th>Description</th> #}
-                <th>Start_at</th>
-                <th>End_at</th>
+                <th>Date de début</th>
                 <th>Organizer</th>
-                {# <th>Image</th> #}
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for event in events %}
             <tr>
-                <td>{{ event.id }}</td>
                 <td>{{ event.title }}</td>
-                {# <td>{{ event.link }}</td> #}
-                {# <td>{{ event.description }}</td> #}
                 <td>{{ event.startAt ? event.startAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ event.endAt ? event.endAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>{{ event.organizer }}</td>
-                {# <td>{{ event.image }}</td> #}
                 <td>
                     <a href="{{ path('app_event_show', {'id': event.id}) }}">show</a>
                     {% if is_granted('ROLE_ADMIN') %}
