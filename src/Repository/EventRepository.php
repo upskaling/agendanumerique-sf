@@ -44,6 +44,7 @@ class EventRepository extends ServiceEntityRepository
                 2 => 'pwn',
                 3 => 'emf',
                 4 => 'afup-poitiers',
+                5 => 'poitiers-aws-user-group',
             ];
 
             $source = array_map(

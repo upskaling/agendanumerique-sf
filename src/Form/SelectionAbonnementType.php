@@ -21,6 +21,7 @@ class SelectionAbonnementType extends AbstractType
                     'PWN' => 2,
                     'EMF' => 3,
                     'Afup Poitiers' => 4,
+                    'Poitiers AWS User Group' => 5,
                 ],
                 'expanded' => true,
                 'multiple' => true,
