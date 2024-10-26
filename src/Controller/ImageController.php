@@ -45,9 +45,16 @@ class ImageController extends AbstractController
 
         if ($this->isImageDownload($cacheItem, $url)) {
             $imageName = md5($url);
+
+            $responseImage = $httpClient->request('GET', $url);
+
+            if (404 === $responseImage->getStatusCode()) {
+                throw $this->createNotFoundException();
+            }
+
             if (file_put_contents(
                 $this->getParameter('app.image_dir').'/'.$imageName,
-                $httpClient->request('GET', $url)->getContent()
+                $responseImage->getContent()
             )) {
                 $cacheItem->set($imageName);
                 $cache->save($cacheItem);
