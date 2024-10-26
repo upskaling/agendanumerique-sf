@@ -55,73 +55,53 @@ class EventValidationDTO
     {
         $event = new Event();
 
-        $title = $this->title;
-        if ($title) {
+        if (isset($this->title)
+            && $title = $this->title) {
             $event->setTitle($title);
             $slugger = new AsciiSlugger();
-            $slug = $slugger->slug($this->organizer.'-'.$title)->lower()->toString();
-            $event->setSlug($slug);
+            $this->slug = $slugger->slug($this->organizer.'-'.$title)->lower()->toString();
+            $event->setSlug($this->slug);
         }
 
-        $link = $this->link;
-        if ($link) {
-            $event->setLink($link);
+        if (isset($this->link)) {
+            $event->setLink($this->link);
         }
 
-        $description = $this->description;
-        if ($description) {
-            $event->setDescription($description);
+        if (isset($this->description)) {
+            $event->setDescription($this->description);
         }
 
-        $startAt = $this->startAt;
-        if ($startAt) {
+        if (null !== $startAt = $this->startAt) {
             $event->setStartAt($startAt);
         }
 
-        $endAt = $this->endAt;
-        if ($endAt) {
-            $event->setEndAt($endAt);
+        $event->setEndAt($this->endAt);
+
+        if (isset($this->organizer)) {
+            $event->setOrganizer($this->organizer);
         }
 
-        $organizer = $this->organizer;
-        if ($organizer) {
-            $event->setOrganizer($organizer);
+        if (isset($this->image)) {
+            $event->setImage($this->image);
+        }
+        $event->setLocation($this->location);
+
+        if (isset($this->slug)) {
+            $event->setSlug($this->slug);
         }
 
-        $image = $this->image;
-        if ($image) {
-            $event->setImage($image);
-        }
-
-        $location = $this->location;
-        if ($location) {
-            $event->setLocation($location);
-        }
-
-        $slug = $this->slug;
-        if ($slug) {
-            $event->setSlug($slug);
-        }
-
-        $source = $this->source;
-        if ($source) {
-            $event->setSource($source);
+        if (isset($this->source)) {
+            $event->setSource($this->source);
         }
 
         return $event;
     }
 
-    /**
-     * Get the value of title.
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * Set the value of title.
-     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -129,17 +109,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of link.
-     */
     public function getLink(): ?string
     {
         return $this->link;
     }
 
-    /**
-     * Set the value of link.
-     */
     public function setLink(string $link): self
     {
         $this->link = $link;
@@ -147,17 +121,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of description.
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * Set the value of description.
-     */
     public function setDescription(?string $description): self
     {
         $this->description = $description;
@@ -165,17 +133,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of startAt.
-     */
     public function getStartAt(): ?\DateTimeImmutable
     {
         return $this->startAt;
     }
 
-    /**
-     * Set the value of startAt.
-     */
     public function setStartAt(?\DateTimeImmutable $startAt): self
     {
         $this->startAt = $startAt;
@@ -183,17 +145,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of endAt.
-     */
     public function getEndAt(): ?\DateTimeImmutable
     {
         return $this->endAt;
     }
 
-    /**
-     * Set the value of endAt.
-     */
     public function setEndAt(?\DateTimeImmutable $endAt): self
     {
         $this->endAt = $endAt;
@@ -201,17 +157,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of organizer.
-     */
     public function getOrganizer(): ?string
     {
         return $this->organizer;
     }
 
-    /**
-     * Set the value of organizer.
-     */
     public function setOrganizer(string $organizer): self
     {
         $this->organizer = $organizer;
@@ -219,17 +169,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of image.
-     */
     public function getImage(): ?string
     {
         return $this->image;
     }
 
-    /**
-     * Set the value of image.
-     */
     public function setImage(?string $image): self
     {
         $this->image = $image;
@@ -237,17 +181,11 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of location.
-     */
     public function getLocation(): ?PostalAddress
     {
         return $this->location;
     }
 
-    /**
-     * Set the value of location.
-     */
     public function setLocation(?PostalAddress $location): self
     {
         $this->location = $location;
@@ -255,17 +193,17 @@ class EventValidationDTO
         return $this;
     }
 
-    /**
-     * Get the value of slug.
-     */
     public function getSlug(): ?string
     {
+        if (isset($this->slug)) {
+            return $this->slug;
+        }
+        $slugger = new AsciiSlugger();
+        $this->slug = $slugger->slug($this->organizer.'-'.$this->title)->lower()->toString();
+
         return $this->slug;
     }
 
-    /**
-     * Set the value of slug.
-     */
     public function setSlug(?string $slug): self
     {
         $this->slug = $slug;
