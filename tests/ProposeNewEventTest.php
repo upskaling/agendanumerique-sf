@@ -52,12 +52,12 @@ class ProposeNewEventTest extends WebTestCase
         $client->request('GET', '/event/propose-new');
         $client->submitForm('Enregistrer', [
             'propose_new[title]' => 'foo',
-            'propose_new[link]' => 'foo',
+            'propose_new[link]' => 'https://example.com',
             'propose_new[description]' => 'foo',
             'propose_new[startAt]' => '2021-01-01 10:00:00',
             'propose_new[endAt]' => '2021-01-01 11:00:00',
             'propose_new[organizer]' => '1',
-            'propose_new[image]' => 'foo',
+            'propose_new[image]' => 'https://example.com/image.png',
             'propose_new[location]' => '1',
         ]);
 

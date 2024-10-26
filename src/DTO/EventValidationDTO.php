@@ -33,7 +33,7 @@ class EventValidationDTO
     #[Assert\NotBlank]
     private string $organizer;
 
-    #[Assert\Url]
+    #[Assert\Url(requireTld: true)]
     private ?string $image = null;
 
     private ?PostalAddress $location = null;

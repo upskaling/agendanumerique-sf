@@ -50,7 +50,7 @@ class Event
     #[ORM\Column(length: 255)]
     private string $organizer;
 
-    #[Assert\Url]
+    #[Assert\Url(requireTld: true)]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
