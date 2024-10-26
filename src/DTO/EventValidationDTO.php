@@ -6,7 +6,7 @@ namespace App\DTO;
 
 use App\Entity\Event;
 use App\Entity\PostalAddress;
-// use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Validator\EventValidationDTOSlugUnique;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -14,10 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     'this.getStartAt() < this.getEndAt() or !this.getEndAt()',
     message: 'La date de début doit être inférieure à la date de fin'
 )]
-// #[UniqueEntity(
-//     'slug',
-//     entityClass: Event::class,
-// )]
+#[EventValidationDTOSlugUnique()]
 class EventValidationDTO
 {
     #[Assert\NotBlank]
