@@ -33,7 +33,6 @@ class EventRetrievalEMF implements EventRetrievalInterface
         yield $this::URI.'/event/mon-premier-jeu-video-la-bataille-des-planetes/';
         yield $this::URI.'/event/brickanoid-gare-aux-briques/';
         yield $this::URI.'/event/mon-premier-jeu-video-ninja-fruits/';
-        yield $this::URI.'/event/la-chasse-aux-aliens-commence/';
         yield $this::URI.'/event/mon-premier-jeu-video-les-fous-du-volant/';
         yield $this::URI.'/event/mon-premier-jeu-video-snake-le-serpent-qui-se-mord-la-queue/';
         yield $this::URI.'/event/je-debute-avec-chatgpt/';
