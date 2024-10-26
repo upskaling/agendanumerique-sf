@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,8 +20,9 @@ class ProposeNewType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('link', null, [
+            ->add('link', UrlType::class, [
                 'label' => "un lien vers l'événement",
+                'default_protocol' => 'https',
             ])
             ->add('description', TextareaType::class, [
                 'attr' => [
@@ -32,11 +34,12 @@ class ProposeNewType extends AbstractType
                 'required' => false,
             ])
             ->add('organizer')
-            ->add('image', null, [
+            ->add('image', UrlType::class, [
                 'label' => "url d'une image",
                 'attr' => [
                     'placeholder' => 'https://example.com/image.jpg',
                 ],
+                'default_protocol' => 'https',
             ])
             ->add('location', EntityType::class, [
                 'class' => PostalAddress::class,
