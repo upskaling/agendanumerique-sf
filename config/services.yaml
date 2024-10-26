@@ -6,6 +6,10 @@
 parameters:
     app.image_dir: '%kernel.project_dir%/var/storage/images'
     app.image_cache_dir: '%kernel.project_dir%/var/storage/cache'
+    default_base_url: "http://127.0.0.1"
+    router.request_context.base_url: "%env(default:default_base_url:SYMFONY_DEFAULT_ROUTE_URL)%"
+    mailer.from_email: '%env(MAILER_FROM_EMAIL)%'
+    mailer.admin_email: '%env(MAILER_ADMIN_EMAIL)%'
 
 services:
     # default configuration for services in *this* file
