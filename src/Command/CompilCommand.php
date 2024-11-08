@@ -67,7 +67,7 @@ class CompilCommand extends Command
 
             $this->entityManager->persist($event);
 
-            $io->success(sprintf(
+            $io->success(\sprintf(
                 'Event "%s" has been created',
                 $event->getTitle(),
             ));
