@@ -100,6 +100,9 @@ class EventRetrievalPoitiersAWSUserGroup implements EventRetrievalInterface
         );
 
         $date = preg_replace('/^\w+\. /', '', $date);
+        if (null === $date) {
+            return false;
+        }
 
         return \DateTimeImmutable::createFromFormat(
             'd m Y, H:i T',
