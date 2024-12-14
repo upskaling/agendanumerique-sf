@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\DTO\EventValidationDTO;
-use App\EventRetrieval\EventRetrievalInterface;
+use App\Entity\Event;
+use App\EventRetrieval\EventCompilationService;
+use App\Repository\EventRepository;
+use App\Validator\EventValidationDTOSlugUnique;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
@@ -21,59 +25,127 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 )]
 class CompilCommand extends Command
 {
-    /**
-     * @param iterable<EventRetrievalInterface> $compils
-     */
     public function __construct(
-        #[AutowireIterator('app.EventRetrieval')]
-        private readonly iterable $compils,
+        private readonly EventCompilationService $eventCompilationService,
         private readonly EntityManagerInterface $entityManager,
-        private readonly ValidatorInterface $validation,
+        private readonly ValidatorInterface $validator,
+        private readonly EventRepository $eventRepository,
     ) {
         parent::__construct();
-    }
-
-    protected function configure(): void
-    {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
-        /** @var EventValidationDTO[] $eventValidationDTOList */
-        $eventValidationDTOList = [];
-        foreach ($this->compils as $compil) {
-            $eventValidationDTOList = array_merge($eventValidationDTOList, $compil->retrieveEvents());
+        try {
+            $eventValidationDTOs = $this->eventCompilationService->collectEvents();
+            $this->processEvents($eventValidationDTOs, $io);
+
+            $this->entityManager->flush();
+            $io->success('Event compilation completed successfully.');
+
+            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            $io->error('Event compilation failed: '.$e->getMessage());
+
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * @param iterable<EventValidationDTO> $eventValidationDTOs
+     */
+    private function processEvents(iterable $eventValidationDTOs, SymfonyStyle $io): void
+    {
+        foreach ($eventValidationDTOs as $eventValidationDTO) {
+            $this->validateAndPersistEvent($eventValidationDTO, $io);
+        }
+    }
+
+    private function validateAndPersistEvent(EventValidationDTO $eventValidationDTO, SymfonyStyle $io): void
+    {
+        $validationErrors = $this->validator->validate($eventValidationDTO);
+        if ($validationErrors->count() > 0) {
+            $this->handleEventValidationErrors($eventValidationDTO, $validationErrors, $io);
+
+            return;
         }
 
-        /** @var EventValidationDTO $eventValidationDTO */
-        foreach ($eventValidationDTOList as $eventValidationDTO) {
-            $errors = $this->validation->validate($eventValidationDTO);
+        $this->createOrUpdateEvent($eventValidationDTO, $io);
+    }
 
-            if (0 !== \count($errors)) {
-                continue;
-            }
+    private function handleEventValidationErrors(
+        EventValidationDTO $eventValidationDTO,
+        ConstraintViolationListInterface $validationErrors,
+        SymfonyStyle $io,
+    ): void {
+        $firstError = $validationErrors->get(0);
 
-            $event = $eventValidationDTO->toEntity();
-            // vérifiez que le slug et unique
+        if ($this->isSlugUniqueConstraintViolation($firstError)) {
+            $this->handleDuplicateSlug($eventValidationDTO, $io);
+        }
+    }
 
-            $errors = $this->validation->validate($event);
+    private function isSlugUniqueConstraintViolation(ConstraintViolationInterface $error): bool
+    {
+        return $error->getConstraint() instanceof EventValidationDTOSlugUnique;
+    }
 
-            if (0 !== \count($errors)) {
-                continue;
-            }
+    private function handleDuplicateSlug(EventValidationDTO $eventValidationDTO, SymfonyStyle $io): void
+    {
+        $existingEvent = $this->eventRepository->findOneBy(['slug' => $eventValidationDTO->getSlug()]);
+
+        if ($existingEvent) {
+            $this->updateExistingEvent($existingEvent, $eventValidationDTO);
+            $io->note(\sprintf('Event "%s" already exists. Updated existing event.', $existingEvent->getTitle()));
+        }
+    }
+
+    private function createOrUpdateEvent(EventValidationDTO $eventValidationDTO, SymfonyStyle $io): void
+    {
+        $event = $eventValidationDTO->toEntity();
+        $entityValidationErrors = $this->validator->validate($event);
+
+        if (0 === $entityValidationErrors->count()) {
             $event->setPublished(new \DateTimeImmutable());
-
             $this->entityManager->persist($event);
 
-            $io->success(\sprintf(
-                'Event "%s" has been created',
-                $event->getTitle(),
-            ));
+            $io->success(\sprintf('Event "%s" has been created', $event->getTitle()));
         }
-        $this->entityManager->flush();
+    }
 
-        return Command::SUCCESS;
+    private function updateExistingEvent(Event $existingEvent, EventValidationDTO $newEventData): void
+    {
+        if (null !== $newEventData->getTitle()) {
+            $existingEvent->setTitle($newEventData->getTitle());
+        }
+
+        if (null !== $newEventData->getDescription()) {
+            $existingEvent->setDescription($newEventData->getDescription());
+        }
+
+        if (null !== $newEventData->getStartAt()) {
+            $existingEvent->setStartAt($newEventData->getStartAt());
+        }
+
+        if (null !== $newEventData->getEndAt()) {
+            $existingEvent->setEndAt($newEventData->getEndAt());
+        }
+
+        if (null !== $newEventData->getImage()) {
+            $existingEvent->setImage($newEventData->getImage());
+        }
+
+        $this->validateUpdatedEvent($existingEvent);
+        $this->entityManager->persist($existingEvent);
+    }
+
+    private function validateUpdatedEvent(Event $event): void
+    {
+        $validationErrors = $this->validator->validate($event);
+        if ($validationErrors->count() > 0) {
+            throw new \InvalidArgumentException((string) $validationErrors);
+        }
     }
 }
