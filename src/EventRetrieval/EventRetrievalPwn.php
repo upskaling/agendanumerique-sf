@@ -45,13 +45,13 @@ class EventRetrievalPwn implements EventRetrievalInterface
     private function convertDate(string $date): \DateTimeImmutable|false
     {
         $date = str_replace(
-            ['jan.', 'fév.', 'mars', 'avr.', 'mai', 'juin', 'juil', 'aou', 'sep', 'oct.', 'nov.', 'déc.'],
+            ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
             $date
         );
 
         return \DateTimeImmutable::createFromFormat(
-            'n j, Y à H:i',
+            'n j Y à H:i',
             $date
         );
     }
