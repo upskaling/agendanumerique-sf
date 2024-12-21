@@ -67,8 +67,7 @@ class ImageController extends AbstractController
             }
         }
 
-        // si l'image télécharger et un gif
-        if (preg_match('/\.gif$/', $url)) {
+        if ($this->isImageGif($url)) {
             return new BinaryFileResponse(
                 $this->getParameter('app.image_dir').'/'.$cacheItem->get()
             );
@@ -98,5 +97,16 @@ class ImageController extends AbstractController
         string $url,
     ): bool {
         return !$cacheItem->isHit() || !file_exists($this->getParameter('app.image_dir').'/'.md5($url));
+    }
+
+    private function isImageGif(string $url): bool
+    {
+        foreach (['/\.gif$/', '/\.webp$/'] as $regex) {
+            if (preg_match($regex, $url)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
