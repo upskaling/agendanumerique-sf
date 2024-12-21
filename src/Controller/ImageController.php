@@ -8,6 +8,7 @@ use League\Glide\Responses\SymfonyResponseFactory;
 use League\Glide\Server;
 use League\Glide\Signatures\SignatureException;
 use League\Glide\Signatures\SignatureFactory;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\CacheItem;
@@ -21,6 +22,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ImageController extends AbstractController
 {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
+    }
+
     #[Route('/_image', name: 'image_glide')]
     public function index(
         HttpClientInterface $httpClient,
@@ -79,6 +85,7 @@ class ImageController extends AbstractController
 
             return $response;
         } catch (\Exception $e) {
+            $this->logger->error($e->getMessage(), ['exception' => $e]);
             throw new BadRequestHttpException('Invalid image');
         }
     }
