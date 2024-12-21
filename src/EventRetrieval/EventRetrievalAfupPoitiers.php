@@ -15,6 +15,7 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
 {
     private const URI = 'https://www.meetup.com/afup-poitiers-php/events/';
     private const NAME = 'afup-poitiers';
+    private const ORGANIZER = 'Afup Poitiers';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -43,8 +44,7 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
     private function loadEvent(Crawler $crawler): EventValidationDTO
     {
         $event = new EventValidationDTO(self::NAME);
-        $organizer = 'Afup Poitiers';
-        $event->setOrganizer($organizer);
+        $event->setOrganizer(self::ORGANIZER);
 
         $title = $crawler->filter('div:nth-child(1) > span:nth-child(2)')->text();
         $event->setTitle($title);
@@ -55,7 +55,7 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
         }
 
         try {
-            $image = $crawler->filter('div img')->attr('src');
+            $image = $crawler->filter('#event-group-link > div:nth-child(1) > div:nth-child(1) > img:nth-child(1)')->attr('src');
             $event->setImage($image);
         } catch (\InvalidArgumentException $e) {
             $this->logger->debug(
@@ -67,15 +67,20 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
         }
 
         $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($organizer.'-'.$title)->lower()->toString();
+        $slug = $slugger->slug(self::ORGANIZER.'-'.$title)->lower()->toString();
         $event->setSlug($slug);
 
         $description = $crawler->filter('div.md\:block > div')->html();
         $event->setDescription($description);
 
         $lieu = $crawler->filter('div:nth-child(1) > div:nth-child(3) > span:nth-child(2)')->text();
-        if ('Cobalt, Poitiers' === $lieu) {
-            $location = $this->postalAddressRepository->findOneBy(['name' => 'Cobalt']);
+
+        $location = match ($lieu) {
+            'Cobalt, Poitiers' => $this->postalAddressRepository->findOneBy(['name' => 'Cobalt']),
+            'HTAG' => $this->postalAddressRepository->findOneBy(['name' => 'HTAG']),
+            default => null,
+        };
+        if ($location) {
             $event->setLocation($location);
         }
 
