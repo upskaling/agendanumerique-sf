@@ -15,6 +15,7 @@ class EventRetrievalPoitiersAWSUserGroup implements EventRetrievalInterface
 {
     private const URI = 'https://www.meetup.com/fr-FR/poitiers-aws-user-group/events/';
     private const NAME = 'poitiers-aws-user-group';
+    private const ORGANIZER = 'Poitiers AWS User Group';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -43,8 +44,7 @@ class EventRetrievalPoitiersAWSUserGroup implements EventRetrievalInterface
     private function loadEvent(Crawler $crawler): EventValidationDTO
     {
         $event = new EventValidationDTO(self::NAME);
-        $organizer = 'Poitiers AWS User Group';
-        $event->setOrganizer($organizer);
+        $event->setOrganizer(self::ORGANIZER);
 
         $title = $crawler->filter('div:nth-child(1) > span:nth-child(2)')->text();
         $event->setTitle($title);
@@ -67,7 +67,7 @@ class EventRetrievalPoitiersAWSUserGroup implements EventRetrievalInterface
         }
 
         $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($organizer.'-'.$title)->lower()->toString();
+        $slug = $slugger->slug(self::ORGANIZER.'-'.$title)->lower()->toString();
         $event->setSlug($slug);
 
         $description = $crawler->filter('div.md\:block > div')->html();
