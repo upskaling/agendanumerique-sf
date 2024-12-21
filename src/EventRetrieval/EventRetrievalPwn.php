@@ -14,6 +14,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
 {
     private const URI = 'https://pwn-association.org';
     private const NAME = 'pwn';
+    private const ORGANIZER = 'pwn';
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -58,7 +59,6 @@ class EventRetrievalPwn implements EventRetrievalInterface
 
     private function loadEvent(string $link): EventValidationDTO
     {
-        $organizer = 'pwn';
         $url = self::URI.$link;
 
         $response = $this->httpClient->request(
@@ -71,7 +71,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $crawler = new Crawler($content);
         $event = new EventValidationDTO(self::NAME);
 
-        $event->setOrganizer($organizer);
+        $event->setOrganizer(self::ORGANIZER);
 
         // .event-title
         $title = $crawler->filter('.event-title')->text();
@@ -80,7 +80,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $event->setLink($url);
 
         $slugger = new AsciiSlugger();
-        $slug = $slugger->slug($organizer.'-'.$title)->lower()->toString();
+        $slug = $slugger->slug(self::ORGANIZER.'-'.$title)->lower()->toString();
         $event->setSlug($slug);
 
         // meta[property='og:image']
