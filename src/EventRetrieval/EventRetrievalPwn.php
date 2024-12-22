@@ -43,18 +43,60 @@ class EventRetrievalPwn implements EventRetrievalInterface
             });
     }
 
+    /**
+     * Convertit une date au format français "dd mois yyyy à HH:mm" en objet DateTimeImmutable.
+     *
+     * @param string $date Format attendu : "dd mois yyyy à HH:mm"
+     */
     private function convertDate(string $date): \DateTimeImmutable|false
     {
-        $date = str_replace(
-            ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
-            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-            $date
-        );
+        // Tableau de correspondance des mois en français
+        $monthsFr = [
+            'janvier' => '01',
+            'février' => '02',
+            'mars' => '03',
+            'avril' => '04',
+            'mai' => '05',
+            'juin' => '06',
+            'juillet' => '07',
+            'août' => '08',
+            'septembre' => '09',
+            'octobre' => '10',
+            'novembre' => '11',
+            'décembre' => '12',
+        ];
 
-        return \DateTimeImmutable::createFromFormat(
-            'n j Y à H:i',
-            $date
-        );
+        try {
+            // Nettoie la chaîne d'entrée
+            $date = mb_strtolower(trim($date));
+
+            // Parse le format "dd mois yyyy à HH:mm"
+            if (!preg_match('/^(\d{2}) ([a-zéû]+) (\d{4}) à (\d{2}):(\d{2})$/', $date, $matches)) {
+                return false;
+            }
+
+            [, $day, $month, $year, $hour, $minute] = $matches;
+
+            // Vérifie si le mois existe dans notre tableau
+            if (!isset($monthsFr[$month])) {
+                return false;
+            }
+
+            // Construit la date au format Y-m-d H:i
+            $dateStr = \sprintf(
+                '%s-%s-%s %s:%s',
+                $year,
+                $monthsFr[$month],
+                $day,
+                $hour,
+                $minute
+            );
+
+            // Crée l'objet DateTimeImmutable
+            return new \DateTimeImmutable($dateStr);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     private function loadEvent(string $link): EventValidationDTO
