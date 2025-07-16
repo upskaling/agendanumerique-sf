@@ -5,7 +5,7 @@ phpstan:
 	symfony php vendor/bin/phpstan analyze --memory-limit=1G
 
 phpunit:
-	symfony php vendor/bin/phpunit
+	symfony php vendor/bin/simple-phpunit
 
 audit:
 	composer audit
