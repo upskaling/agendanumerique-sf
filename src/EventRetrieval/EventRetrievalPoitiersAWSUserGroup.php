@@ -35,10 +35,13 @@ class EventRetrievalPoitiersAWSUserGroup implements EventRetrievalInterface
 
         $crawler = new Crawler($content);
 
-        return $crawler->filter('ul.w-full > li')
+        /** @var EventValidationDTO[] $result */
+        $result = $crawler->filter('ul.w-full > li')
             ->each(function (Crawler $crawler) {
                 return $this->loadEvent($crawler);
             });
+
+        return $result;
     }
 
     private function loadEvent(Crawler $crawler): EventValidationDTO

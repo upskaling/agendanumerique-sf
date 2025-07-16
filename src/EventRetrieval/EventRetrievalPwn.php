@@ -33,14 +33,16 @@ class EventRetrievalPwn implements EventRetrievalInterface
 
         $crawler = new Crawler($content);
 
-        // .upcoming-events .event-inner>a
-        return $crawler->filter('.upcoming-events .event-inner>a')
+        /** @var EventValidationDTO[] $result */
+        $result = $crawler->filter('.upcoming-events .event-inner>a')
             ->each(function (Crawler $event) {
                 $link = $event->attr('href');
                 if (null !== $link) {
                     return $this->loadEvent($link);
                 }
             });
+
+        return $result;
     }
 
     /**

@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Tests\EventRetrieval;
+
+use App\DTO\EventValidationDTO;
+use App\Entity\PostalAddress;
+use App\EventRetrieval\EventRetrievalCobaltPoitiers;
+use App\Repository\PostalAddressRepository;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
+
+class EventRetrievalCobaltPoitiersTest extends TestCase
+{
+    /** @var MockObject&HttpClientInterface */
+    private HttpClientInterface $httpClient;
+    private LoggerInterface $logger;
+    /** @var MockObject&PostalAddressRepository */
+    private PostalAddressRepository $postalAddressRepository;
+    private EventRetrievalCobaltPoitiers $eventRetrievalCobaltPoitiers;
+
+    protected function setUp(): void
+    {
+        $this->httpClient = $this->createMock(HttpClientInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->postalAddressRepository = $this->createMock(PostalAddressRepository::class);
+
+        $this->eventRetrievalCobaltPoitiers = new EventRetrievalCobaltPoitiers(
+            $this->httpClient,
+            $this->logger,
+            $this->postalAddressRepository
+        );
+    }
+
+    public function testRetrieveEvents(): void
+    {
+        $htmlContent = file_get_contents(__DIR__.'/Fixtures/cobalt_poitiers_events.html');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getContent')->willReturn($htmlContent);
+
+        $this->httpClient->method('request')
+            ->with('GET', 'https://www.cobaltpoitiers.fr/agenda_1550.html')
+            ->willReturn($response);
+
+        $this->postalAddressRepository->method('findOneBy')
+            ->willReturnCallback(function ($criteria) {
+                /** @var array<string,string> $criteria */
+                if ('HTAG' === $criteria['name']) {
+                    return (new PostalAddress())
+                        ->setName('HTAG');
+                }
+
+                return null;
+            });
+
+        $events = $this->eventRetrievalCobaltPoitiers->retrieveEvents();
+
+        $this->assertCount(1, $events);
+        $this->assertInstanceOf(EventValidationDTO::class, $events[0]);
+        $this->assertSame('Digital Expresso #2 ; Le RGPD simplifié : Les essentiels pour protéger votre activité et vos données', $events[0]->getTitle());
+        $this->assertSame('https://www.cobaltpoitiers.fr/agenda_1550.html', $events[0]->getLink());
+        $this->assertNull($events[0]->getLocation()?->getName());
+    }
+}

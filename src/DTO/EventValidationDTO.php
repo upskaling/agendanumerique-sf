@@ -86,9 +86,7 @@ class EventValidationDTO
             $event->setSlug($this->slug);
         }
 
-        if (isset($this->source)) {
-            $event->setSource($this->source);
-        }
+        $event->setSource($this->source);
 
         return $event;
     }

@@ -35,10 +35,13 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
 
         $crawler = new Crawler($content);
 
-        return $crawler->filter('ul.w-full > li')
+        /** @var EventValidationDTO[] $result */
+        $result = $crawler->filter('ul.w-full > li')
             ->each(function (Crawler $crawler) {
                 return $this->loadEvent($crawler);
             });
+
+        return $result;
     }
 
     private function loadEvent(Crawler $crawler): EventValidationDTO
@@ -58,6 +61,7 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
             $image = $crawler->filter('#event-group-link > div:nth-child(1) > div:nth-child(1) > img:nth-child(1)')->attr('src');
             $event->setImage($image);
         } catch (\InvalidArgumentException $e) {
+            $event->setImage('https://secure.meetupstatic.com/photos/event/9/7/c/a/clean_511718858.webp');
             $this->logger->debug(
                 'Image not found',
                 [
@@ -73,14 +77,14 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
         $description = $crawler->filter('div.md\:block > div')->html();
         $event->setDescription($description);
 
-        $lieu = $crawler->filter('div:nth-child(1) > div:nth-child(3) > span:nth-child(2)')->text();
+        $lieu = $crawler->filter('div:nth-child(1) > div:nth-child(3) > span:nth-child(2)')->text(); // Cobalt, Poitiers
 
-        $location = match ($lieu) {
-            'Cobalt, Poitiers' => $this->postalAddressRepository->findOneBy(['name' => 'Cobalt']),
-            'HTAG' => $this->postalAddressRepository->findOneBy(['name' => 'HTAG']),
-            default => null,
-        };
-        if ($location) {
+        if (false !== mb_strpos($lieu, 'Cobalt')) {
+            $location = $this->postalAddressRepository->findOneBy(['name' => 'Cobalt']);
+            $event->setLocation($location);
+        }
+        if (false !== mb_strpos($lieu, 'HTAG')) {
+            $location = $this->postalAddressRepository->findOneBy(['name' => 'HTAG']);
             $event->setLocation($location);
         }
 

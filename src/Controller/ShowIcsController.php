@@ -14,8 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ShowIcsController extends AbstractController
 {
-    #[Route('/event/{id}/ics', name: 'app_event_show_ics', methods: ['GET'], requirements: ['id' => '\d+'])]
-    #[Route('/event/{slug}/ics', name: 'app_event_show_slug_ics', methods: ['GET'])]
+    #[Route('/event/{id:event}/ics', name: 'app_event_show_ics', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/event/{slug:event}/ics', name: 'app_event_show_slug_ics', methods: ['GET'])]
     public function showIcs(
         Event $event,
         CalendarGeneratorIcs $calendarGeneratorIcs,

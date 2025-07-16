@@ -67,18 +67,18 @@ class ImageController extends AbstractController
             }
         }
 
+        /** @var string $path */
+        $path = $cacheItem->get();
+
         if ($this->isImageGif($url)) {
             return new BinaryFileResponse(
-                $this->getParameter('app.image_dir').'/'.$cacheItem->get()
+                $this->getParameter('app.image_dir').'/'.$path
             );
         }
 
         $glide->setResponseFactory(new SymfonyResponseFactory($request));
 
         try {
-            /** @var string $path */
-            $path = $cacheItem->get();
-
             /** @var StreamedResponse $response */
             $response = $glide->getImageResponse($path, $parameters);
 

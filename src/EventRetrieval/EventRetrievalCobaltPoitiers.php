@@ -34,11 +34,13 @@ class EventRetrievalCobaltPoitiers implements EventRetrievalInterface
 
         $crawler = new Crawler($content);
 
-        // .agenda.elem
-        return $crawler->filter('.agenda.elem')
+        /** @var EventValidationDTO[] $result */
+        $result = $crawler->filter('.agenda.elem')
             ->each(function (Crawler $crawler) {
                 return $this->loadEvent($crawler);
             });
+
+        return $result;
     }
 
     private function loadEvent(Crawler $crawler): EventValidationDTO

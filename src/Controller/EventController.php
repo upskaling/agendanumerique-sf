@@ -65,8 +65,8 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_event_show', methods: ['GET'], requirements: ['id' => '\d+'])]
-    #[Route('/{slug}', name: 'app_event_show_slug', methods: ['GET'])]
+    #[Route('/{id:event}', name: 'app_event_show', methods: ['GET'], requirements: ['id' => '\d+'])]
+    #[Route('/{slug:event}', name: 'app_event_show_slug', methods: ['GET'])]
     public function show(Event $event): Response
     {
         return $this->render('event/show.html.twig', [
@@ -74,7 +74,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id:event}/edit', name: 'app_event_edit', methods: ['GET', 'POST'])]
     #[IsGranted(User::ROLE_ADMIN)]
     public function edit(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
@@ -93,7 +93,7 @@ class EventController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_event_delete', methods: ['POST'])]
+    #[Route('/{id:event}', name: 'app_event_delete', methods: ['POST'])]
     #[IsGranted(User::ROLE_ADMIN)]
     public function delete(Request $request, Event $event, EntityManagerInterface $entityManager): Response
     {
