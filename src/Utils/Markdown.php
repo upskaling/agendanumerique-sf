@@ -8,14 +8,14 @@ namespace App\Utils;
 
 class Markdown
 {
-    private $parser;
+    private \Parsedown $parser;
 
     public function __construct()
     {
         $this->parser = new \Parsedown();
     }
 
-    public function toHtml($text)
+    public function toHtml(string $text): mixed
     {
         return $this->parser->text($text);
     }
