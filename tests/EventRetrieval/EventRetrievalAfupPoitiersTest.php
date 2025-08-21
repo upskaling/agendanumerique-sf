@@ -62,8 +62,8 @@ class EventRetrievalAfupPoitiersTest extends TestCase
 
         $this->assertCount(1, $events);
         $this->assertInstanceOf(EventValidationDTO::class, $events[0]);
-        $this->assertSame('Super Apéro PHP - "Comment j’ai survécu dans l’écosystème tech"', $events[0]->getTitle());
-        $this->assertSame('https://www.meetup.com/afup-poitiers-php/events/306320685/?eventOrigin=group_events_list', $events[0]->getLink());
+        $this->assertSame('Apéro PHP - Mercure, SSE, API Platform et un LLM élèvent un chat(bot) ', $events[0]->getTitle());
+        $this->assertSame('https://www.meetup.com/fr-FR/afup-poitiers-php/events/308777211/', $events[0]->getLink());
         $this->assertSame('HTAG', $events[0]->getLocation()?->getName());
     }
 }
