@@ -158,7 +158,7 @@ class EventRetrievalEMF implements EventRetrievalInterface
         $decodedText = html_entity_decode($text, \ENT_QUOTES | \ENT_HTML5, 'UTF-8');
         $cleanText = strip_tags($decodedText);
 
-        return trim($cleanText);
+        return mb_trim($cleanText);
     }
 
     private function convertDate(string $date): \DateTimeImmutable|false

@@ -70,7 +70,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
 
         try {
             // Nettoie la chaîne d'entrée
-            $date = mb_strtolower(trim($date));
+            $date = mb_strtolower(mb_trim($date));
 
             // Parse le format "dd mois yyyy à HH:mm"
             if (!preg_match('/^(\d{2}) ([a-zéû]+) (\d{4}) à (\d{2}):(\d{2})$/', $date, $matches)) {
