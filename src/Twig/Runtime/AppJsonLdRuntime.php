@@ -56,6 +56,8 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
                     'addressCountry' => $location->getAddressCountry(),
                 ],
             ];
+        } else {
+            return '';
         }
 
         $organizer = $event->getOrganizer();
