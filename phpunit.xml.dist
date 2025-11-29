@@ -34,6 +34,11 @@
     </listeners>
 
     <extensions>
+        <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension">
+            <parameter name="clock-mock-namespaces" value="App" />
+            <parameter name="dns-mock-namespaces" value="App" />
+        </bootstrap>
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
         <!-- it begins a database transaction before every testcase and rolls it back after
              the test finished, so tests can manipulate the database without affecting other tests -->
         <!-- <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" /> -->
