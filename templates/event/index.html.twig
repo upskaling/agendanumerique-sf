@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for event in events %}
+        {% for event in paginator %}
             <tr>
                 <td>{{ event.title }}</td>
                 <td>{{ event.startAt ? event.startAt|date('Y-m-d H:i:s') : '' }}</td>
@@ -40,5 +40,28 @@
     </table>
     {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('app_event_new') }}">Create new</a>
+    {% endif %}
+    {% if totalPages is defined and totalPages > 1 %}
+    <nav aria-label="Pagination">
+        <ul class="pagination">
+            {% if currentPage > 1 %}
+                <li class="page-item"><a class="page-link" href="{{ path('app_event_index', {page: currentPage - 1}) }}">Précédent</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Précédent</span></li>
+            {% endif %}
+
+            {% for i in 1..totalPages %}
+                <li class="page-item {{ i == currentPage ? 'active' : '' }}">
+                    <a class="page-link" href="{{ path('app_event_index', {page: i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {% if currentPage < totalPages %}
+                <li class="page-item"><a class="page-link" href="{{ path('app_event_index', {page: currentPage + 1}) }}">Suivant</a></li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">Suivant</span></li>
+            {% endif %}
+        </ul>
+    </nav>
     {% endif %}
 {% endblock %}

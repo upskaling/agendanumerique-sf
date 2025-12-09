@@ -24,6 +24,15 @@ class EventRepository extends ServiceEntityRepository
     }
 
     /**
+     * Retourne un QueryBuilder pour lister les événements ordonnés (utilisé pour la pagination).
+     */
+    public function createListQueryBuilder(): \Doctrine\ORM\QueryBuilder
+    {
+        return $this->createQueryBuilder('e')
+            ->orderBy('e.startAt', 'DESC');
+    }
+
+    /**
      * @param array<int> $source
      *
      * @return array<Event>

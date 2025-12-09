@@ -21,9 +21,30 @@ class EventController extends AbstractController
     #[Route('/', name: 'app_event_index', methods: ['GET'])]
     public function index(
         EventRepository $eventRepository,
+        Request $request,
     ): Response {
+        $page = (int) $request->query->getInt('page', 1);
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $perPage = 25;
+
+        $qb = $eventRepository->createListQueryBuilder();
+        $query = $qb
+            ->getQuery()
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage);
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($query, true);
+        $totalItems = \count($paginator);
+        $totalPages = (int) ceil($totalItems / $perPage);
+
         return $this->render('event/index.html.twig', [
-            'events' => array_reverse($eventRepository->findAll()),
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'perPage' => $perPage,
+            'paginator' => $paginator,
         ]);
     }
 
@@ -33,7 +54,7 @@ class EventController extends AbstractController
         EventRepository $eventRepository,
     ): Response {
         /** @var int[] $selection */
-        $selection = $request->get('selection');
+        $selection = $request->query->all()['selection'] ?? [];
 
         return $this->render(
             'event/index.xml.twig',
