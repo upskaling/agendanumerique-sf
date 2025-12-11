@@ -39,7 +39,7 @@ class ShowIcsController extends AbstractController
         CalendarGeneratorIcs $calendarGeneratorIcs,
     ): Response {
         /** @var int[] $selection */
-        $selection = $request->get('selection');
+        $selection = $request->query->all()['selection'] ?? null;
 
         $calendarExport = $calendarGeneratorIcs->getCalendar(
             $eventRepository->findLatest($selection)

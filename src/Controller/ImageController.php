@@ -43,7 +43,7 @@ class ImageController extends AbstractController
         }
 
         /** @var string $url */
-        $url = $request->get('url');
+        $url = $request->query->get('url');
 
         $cache = new FilesystemAdapter();
 

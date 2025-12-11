@@ -18,7 +18,7 @@ class IndexController extends AbstractController
         Request $request,
     ): Response {
         /** @var int[] $selection */
-        $selection = $request->get('selection');
+        $selection = $request->query->all()['selection'] ?? null;
 
         return $this->render('index/index.html.twig', [
             'events' => $eventRepository->findLatest($selection),
