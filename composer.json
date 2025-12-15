@@ -34,7 +34,7 @@
         "symfony/intl": "7.4.*",
         "symfony/mailer": "7.4.*",
         "symfony/mime": "7.4.*",
-        "symfony/monolog-bundle": "^3.0",
+        "symfony/monolog-bundle": "^4.0",
         "symfony/notifier": "7.4.*",
         "symfony/process": "7.4.*",
         "symfony/property-access": "7.4.*",
@@ -121,7 +121,7 @@
         "symfony/css-selector": "7.4.*",
         "symfony/debug-bundle": "7.4.*",
         "symfony/maker-bundle": "^1.0",
-        "symfony/phpunit-bridge": "^7",
+        "symfony/phpunit-bridge": "^8",
         "symfony/stopwatch": "7.4.*",
         "symfony/web-profiler-bundle": "7.4.*"
     }
