@@ -57,7 +57,7 @@ class EventRepository extends ServiceEntityRepository
             ];
 
             $source = array_map(
-                function ($id) use ($sourceList) {
+                static function ($id) use ($sourceList) {
                     return $sourceList[$id] ?? null;
                 },
                 $source
