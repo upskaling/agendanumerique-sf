@@ -30,13 +30,19 @@ class Event
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     private ?Uuid $uuid = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private string $title;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
+    #[Assert\Url(requireTld: true)]
     #[ORM\Column(length: 255)]
     private string $link;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 10000)]
     #[ORM\Column(type: Types::TEXT)]
     private string $description;
 
@@ -47,6 +53,8 @@ class Event
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $endAt = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private string $organizer;
 
@@ -55,6 +63,7 @@ class Event
     private ?string $image = null;
 
     #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[Assert\Regex(pattern: '/^[a-z0-9-]+$/', message: 'Le slug ne doit contenir que des lettres minuscules, des chiffres et des tirets')]
     #[ORM\Column(length: 255, unique: true)]
     private string $slug;
@@ -65,6 +74,8 @@ class Event
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $published = null;
 
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255)]
     private string $source;
 
