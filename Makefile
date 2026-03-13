@@ -1,11 +1,34 @@
-phpcs:
-	symfony php vendor/bin/php-cs-fixer fix src --diff
+.PHONY: help cs phpstan test coverage rector audit docker-up docker-down
 
-phpstan:
+help: ## Affiche l'aide
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+cs: ## Corrige le code style
+	symfony php vendor/bin/php-cs-fixer fix src
+
+cs-dry: ## Vérifie le code style sans modifier
+	symfony php vendor/bin/php-cs-fixer fix src --diff --dry-run
+
+phpstan: ## Analyse statique
 	symfony php vendor/bin/phpstan analyze --memory-limit=1G
 
-phpunit:
+test: ## Lance les tests
 	symfony php vendor/bin/simple-phpunit
 
-audit:
+coverage: ## Génère le rapport de coverage
+	XDEBUG_MODE=coverage symfony php vendor/bin/simple-phpunit --coverage-html=var/coverage
+
+rector: ## Refactoring automatique
+	vendor/bin/rector process
+
+audit: ## Audit de sécurité des dépendances
 	composer audit
+
+docker-up: ## Démarre l'environnement Docker
+	docker compose up -d
+
+docker-down: ## Arrête l'environnement Docker
+	docker compose down
+
+fixtures: ## Charge les fixtures
+	symfony console doctrine:fixtures:load --no-interaction
