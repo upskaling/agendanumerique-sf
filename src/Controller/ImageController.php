@@ -47,11 +47,10 @@ class ImageController extends AbstractController
 
         $cache = new FilesystemAdapter();
 
-        $cacheItem = $cache->getItem($url);
+        $imageName = md5($url);
+        $cacheItem = $cache->getItem($imageName);
 
         if ($this->isImageDownload($cacheItem, $url)) {
-            $imageName = md5($url);
-
             $responseImage = $httpClient->request('GET', $url);
 
             if (404 === $responseImage->getStatusCode()) {
