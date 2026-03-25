@@ -37,7 +37,7 @@ class EventValidationDTOSlugUniqueValidator extends ConstraintValidator
             $this->context->buildViolation($constraint->message)
                 ->setParameter('{{ value }}', $value->getSlug() ?? 'null')
                 ->addViolation();
-            $this->logger->error("Le slug existe déjà {$value->getSlug()} pour {$event->getTitle()} avec l'id {$event->getId()}");
+            $this->logger->notice("Le slug existe déjà {$value->getSlug()} pour {$event->getTitle()} avec l'id {$event->getId()}");
         }
     }
 }
