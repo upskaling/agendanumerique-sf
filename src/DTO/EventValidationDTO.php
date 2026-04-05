@@ -54,9 +54,11 @@ class EventValidationDTO
 
         if (isset($this->title)) {
             $event->setTitle($this->title);
-            $slugger = new AsciiSlugger();
-            $this->slug = $slugger->slug($this->organizer.'-'.$this->title)->lower()->toString();
-            $event->setSlug($this->slug);
+            if (null === $this->slug) {
+                $slugger = new AsciiSlugger();
+                $this->slug = $slugger->slug($this->organizer.'-'.$this->title)->lower()->toString();
+                $event->setSlug($this->slug);
+            }
         }
 
         if (isset($this->link)) {

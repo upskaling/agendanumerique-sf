@@ -110,6 +110,7 @@ class CompilCommand extends Command
         if (0 === $entityValidationErrors->count()) {
             $event->setPublished(new \DateTimeImmutable());
             $this->entityManager->persist($event);
+            $this->entityManager->flush();
 
             $io->success(\sprintf('Event "%s" has been created', $event->getTitle()));
         }
