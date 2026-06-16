@@ -6,7 +6,6 @@ namespace App\Twig\Extension;
 
 use App\Twig\Runtime\AppJsonLdRuntime;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 class AppExtension extends AbstractExtension
@@ -25,6 +24,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('encodeJsonLd', [AppJsonLdRuntime::class, 'encodeJsonLd']),
+            new TwigFunction('encodeEventListJsonLd', [AppJsonLdRuntime::class, 'encodeEventListJsonLd'], ['is_safe' => ['html']]),
         ];
     }
 }

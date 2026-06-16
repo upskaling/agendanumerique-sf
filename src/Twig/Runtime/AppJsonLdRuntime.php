@@ -34,12 +34,12 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
 
         $startDate = $event->getStartAt();
         if ($startDate) {
-            $json['startDate'] = $startDate->format('Y-m-d H:i:s');
+            $json['startDate'] = $startDate->format(\DateTimeInterface::ATOM);
         }
 
         $endDate = $event->getEndAt();
         if ($endDate) {
-            $json['endDate'] = $endDate->format('Y-m-d H:i:s');
+            $json['endDate'] = $endDate->format(\DateTimeInterface::ATOM);
         }
 
         $location = $event->getLocation();
@@ -56,8 +56,6 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
                     'addressCountry' => $location->getAddressCountry(),
                 ],
             ];
-        } else {
-            return '';
         }
 
         $organizer = $event->getOrganizer();
@@ -82,6 +80,83 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
         $result = json_encode($json, \JSON_PRETTY_PRINT);
         if (false === $result) {
             throw new \RuntimeException('Unable to encode JSON-LD');
+        }
+
+        return "<script type=\"application/ld+json\">{$result}</script>";
+    }
+
+    /**
+     * Génère une liste d'événements en JSON-LD (EventList).
+     *
+     * @param Event[] $events
+     */
+    public function encodeEventListJsonLd(
+        array $events,
+        string $pageUrl,
+        string $pageTitle = 'Agenda du numérique à Poitiers et ses environs',
+        string $pageDescription = 'Liste des événements numériques à Poitiers',
+    ): string {
+        $itemListElements = [];
+        foreach ($events as $index => $event) {
+            $eventJson = [
+                '@type' => 'Event',
+                'name' => $event->getTitle(),
+                'description' => mb_substr(strip_tags($event->getDescription()), 0, 160),
+                'url' => $event->getLink(),
+            ];
+
+            if ($event->getStartAt()) {
+                $eventJson['startDate'] = $event->getStartAt()->format(\DateTimeInterface::ATOM);
+            }
+
+            if ($event->getEndAt()) {
+                $eventJson['endDate'] = $event->getEndAt()->format(\DateTimeInterface::ATOM);
+            }
+
+            if ($event->getImage()) {
+                $eventJson['image'] = $event->getImage();
+            }
+
+            if ($event->getLocation()) {
+                $location = $event->getLocation();
+                $eventJson['location'] = [
+                    '@type' => 'Place',
+                    'name' => $location->getName(),
+                    'address' => [
+                        '@type' => 'PostalAddress',
+                        'addressLocality' => $location->getAddressLocality(),
+                        'postalCode' => $location->getPostalCode(),
+                        'addressCountry' => $location->getAddressCountry(),
+                    ],
+                ];
+            }
+
+            if ($event->getOrganizer()) {
+                $eventJson['organizer'] = [
+                    '@type' => 'Organization',
+                    'name' => $event->getOrganizer(),
+                ];
+            }
+
+            $itemListElements[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'item' => $eventJson,
+            ];
+        }
+
+        $json = [
+            '@context' => 'https://schema.org',
+            '@type' => 'ItemList',
+            'name' => $pageTitle,
+            'description' => $pageDescription,
+            'url' => $pageUrl,
+            'itemListElement' => $itemListElements,
+        ];
+
+        $result = json_encode($json, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES);
+        if (false === $result) {
+            throw new \RuntimeException('Unable to encode JSON-LD for event list');
         }
 
         return "<script type=\"application/ld+json\">{$result}</script>";

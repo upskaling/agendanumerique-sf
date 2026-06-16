@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block meta %}
+    {{ encodeEventListJsonLd(events, url('app_index'))|raw }}
+{% endblock %}
+
 {% block main %}
 
     <div class="grid">
