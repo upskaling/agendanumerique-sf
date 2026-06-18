@@ -101,7 +101,7 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
             $eventJson = [
                 '@type' => 'Event',
                 'name' => $event->getTitle(),
-                'description' => mb_substr(strip_tags($event->getDescription()), 0, 160),
+                'description' => mb_substr(strip_tags($event->getDescription() ?? ''), 0, 160),
                 'url' => $event->getLink(),
             ];
 
