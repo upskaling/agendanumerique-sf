@@ -12,6 +12,9 @@ parameters:
         - public
         - src
         - tests
+
+    excludePaths:
+        - config/reference.php
     
     # vendor/bin/simple-phpunit install
     bootstrapFiles:
