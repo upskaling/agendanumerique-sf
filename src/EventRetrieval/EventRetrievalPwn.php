@@ -6,6 +6,7 @@ namespace App\EventRetrieval;
 
 use App\DTO\EventValidationDTO;
 use App\Repository\PostalAddressRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -18,6 +19,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
+        private readonly LoggerInterface $logger,
         private readonly PostalAddressRepository $postalAddressRepository,
     ) {
     }
@@ -33,16 +35,47 @@ class EventRetrievalPwn implements EventRetrievalInterface
 
         $crawler = new Crawler($content);
 
-        /** @var EventValidationDTO[] $result */
-        $result = $crawler->filter('.upcoming-events .event-inner>a')
-            ->each(function (Crawler $event) {
-                $link = $event->attr('href');
-                if (null !== $link) {
-                    return $this->loadEvent($link);
-                }
-            });
+        $result = [];
+        foreach ($this->extractEventLinks($crawler) as $link) {
+            $event = $this->loadEventSafely($link);
+
+            if (null !== $event) {
+                $result[] = $event;
+            }
+        }
 
         return $result;
+    }
+
+    /**
+     * Récupère les liens des événements listés sur la page des événements.
+     *
+     * La page peut lister deux fois le même événement (section "à venir" puis
+     * "prochaine saison"), les liens sont donc dédupliqués.
+     *
+     * @return list<string>
+     */
+    private function extractEventLinks(Crawler $crawler): array
+    {
+        $links = $crawler->filter('.upcoming-events .event-inner>a')
+            ->each(static fn (Crawler $event): ?string => $event->attr('href'));
+
+        return array_values(array_unique(array_filter($links)));
+    }
+
+    /**
+     * Charge un événement sans interrompre la récupération si la page est
+     * indisponible (lien périmé renvoyant une 404, erreur réseau, ...).
+     */
+    private function loadEventSafely(string $link): ?EventValidationDTO
+    {
+        try {
+            return $this->loadEvent($link);
+        } catch (\Throwable $e) {
+            $this->logger->warning(\sprintf('Unable to load the pwn event "%s"', $link), ['exception' => $e]);
+        }
+
+        return null;
     }
 
     /**
@@ -118,7 +151,11 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $event->setOrganizer(self::ORGANIZER);
 
         // .event-title
-        $title = $crawler->filter('.event-title')->text();
+        $title = $crawler->filter('.event-title')->text('');
+        if ('' === $title) {
+            throw new EventRetrievalException(\sprintf('No title found on "%s"', $url));
+        }
+
         $event->setTitle($title);
 
         $event->setLink($url);
@@ -128,7 +165,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $event->setSlug($slug);
 
         // meta[property='og:image']
-        $image = $crawler->filter("meta[property='og:image']")->attr('content');
+        $image = $crawler->filter("meta[property='og:image']")->attr('content', '');
         if ($image) {
             $event->setImage($image);
         }
@@ -137,21 +174,24 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $description = $crawler->filter('.event-description');
         $event->setDescription($description->html());
 
-        $lieu = $crawler->filter('.event-description > ul:nth-child(2) > li:nth-child(1) > a')->text();
+        $lieu = $crawler->filter('.event-description > ul:nth-child(2) > li:nth-child(1) > a')->text('');
         $lieuName = 'La Taverne Du Geek';
         if (str_contains($lieu, $lieuName)) {
             $location = $this->postalAddressRepository->findOneBy(['name' => $lieuName]);
             $event->setLocation($location);
         }
 
-        $dateText = $description->filter('ul:nth-child(2) > li:nth-child(2)')->text();
+        $dateText = $description->filter('ul:nth-child(2) > li:nth-child(2)')->text('');
         // ex: "Date et heure : mars 13, 2024 à 19:00 – mars 13, 2024 à 21:00"
 
         // on retire "Date et heure : "
         $dateText = str_replace('Date et heure : ', '', $dateText);
         // ex: "mars 13, 2024 à 19:00 – mars 13, 2024 à 21:00"
         // on explode
-        $dateText = explode(' – ', $dateText);
+        $dateText = array_values(array_filter(explode(' – ', $dateText)));
+        if ([] === $dateText) {
+            throw new EventRetrievalException(\sprintf('No date found on "%s"', $url));
+        }
 
         $startAt = $this->convertDate($dateText[0]);
         if ($startAt) {
