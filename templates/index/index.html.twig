@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block meta %}
-    {{ encodeEventListJsonLd(events, url('app_index'))|raw }}
+    {{ encodeEventListJsonLd(events, url('app_index')) }}
 {% endblock %}
 
 {% block main %}

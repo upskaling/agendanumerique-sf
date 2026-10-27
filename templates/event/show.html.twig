@@ -16,7 +16,7 @@
     {% endif -%}
     <meta property="og:type" content="event" />
     <meta property="og:url" content="{{ url('app_event_show_slug', {'slug': event.slug}) }}" />
-    {{ encodeJsonLd(event)|raw }}
+    {{ encodeJsonLd(event) }}
 {% endblock %}
 
 {% block main %}
