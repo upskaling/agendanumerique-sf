@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /event/new
+Disallow: /event/propose-new
+Allow: /
