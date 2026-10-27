@@ -53,8 +53,8 @@ class EventController extends AbstractController
         Request $request,
         EventRepository $eventRepository,
     ): Response {
-        /** @var int[] $selection */
-        $selection = $request->query->all()['selection'] ?? [];
+        /** @var int[]|null $selection */
+        $selection = $request->query->all()['selection'] ?? null;
 
         return $this->render(
             'event/index.xml.twig',
