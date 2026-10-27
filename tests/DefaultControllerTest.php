@@ -19,6 +19,19 @@ class DefaultControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful(\sprintf('The %s public URL loads correctly.', $url));
     }
 
+    public function testHomePageCanonicalUrlIsAbsolute(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/');
+
+        $this->assertResponseIsSuccessful();
+
+        $canonical = $client->getCrawler()->filter('link[rel="canonical"]');
+
+        $this->assertCount(1, $canonical);
+        $this->assertMatchesRegularExpression('#^https?://#', (string) $canonical->attr('href'));
+    }
+
     /**
      * @return \Generator<array{string}>
      */

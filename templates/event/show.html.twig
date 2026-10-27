@@ -2,8 +2,11 @@
 
 {% block title %}{{ event.title }} - {{ parent() }}{% endblock %}
 
+{% block canonical %}
+    <link rel="canonical" href="{{ url('app_event_show_slug', {'slug': event.slug}) }}" />
+{% endblock %}
+
 {% block meta ~%}
-    <link rel="canonical" href="{{ path('app_event_show_slug', {'slug': event.slug}) }}" />
     {%- if event.published is null ~%}
     <meta name="robots" content="noindex, nofollow, noreferrer" />
     {%- endif ~%}
@@ -12,7 +15,7 @@
     <meta property="og:image" content="{{ event.image }}" />
     {% endif -%}
     <meta property="og:type" content="event" />
-    <meta property="og:url" content="{{ event.link }}" />
+    <meta property="og:url" content="{{ url('app_event_show_slug', {'slug': event.slug}) }}" />
     {{ encodeJsonLd(event)|raw }}
 {% endblock %}
 
