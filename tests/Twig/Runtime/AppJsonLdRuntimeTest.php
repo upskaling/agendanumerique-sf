@@ -20,7 +20,15 @@ class AppJsonLdRuntimeTest extends TestCase
         $urlGenerator
             ->method('generate')
             ->willReturnCallback(
-                static fn (string $name, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string => 'https://agendanumerique.test/event/'.$parameters['slug'],
+                static function (string $name, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string {
+                    $slug = $parameters['slug'] ?? '';
+
+                    if (!\is_string($slug)) {
+                        throw new \InvalidArgumentException('The "slug" parameter must be a string.');
+                    }
+
+                    return 'https://agendanumerique.test/event/'.$slug;
+                },
             );
 
         $this->runtime = new AppJsonLdRuntime($urlGenerator);
@@ -86,7 +94,10 @@ class AppJsonLdRuntimeTest extends TestCase
 
         $this->assertSame(1, substr_count($html, '</script>'), 'The script tag must not be closed by the payload.');
         $this->assertStringNotContainsString('<script>alert', $html);
-        $this->assertStringContainsString('alert(1)', $this->decode($html)['description']);
+
+        $description = $this->decode($html)['description'] ?? null;
+        $this->assertIsString($description);
+        $this->assertStringContainsString('alert(1)', $description);
     }
 
     public function testEncodeEventListJsonLdBuildsAValidItemList(): void
@@ -105,14 +116,23 @@ class AppJsonLdRuntimeTest extends TestCase
         $this->assertSame('https://agendanumerique.test/', $json['url']);
         $this->assertSame(2, $json['numberOfItems']);
         $this->assertSame('https://schema.org/ItemListOrderAscending', $json['itemListOrder']);
-        $this->assertCount(2, $json['itemListElement']);
 
-        $this->assertSame(1, $json['itemListElement'][0]['position']);
-        $this->assertSame('Event', $json['itemListElement'][0]['item']['@type']);
-        $this->assertArrayNotHasKey('@context', $json['itemListElement'][0]['item']);
-        $this->assertSame('https://agendanumerique.test/event/conference-symfony', $json['itemListElement'][0]['item']['url']);
+        $itemListElements = $json['itemListElement'] ?? null;
+        $this->assertIsArray($itemListElements);
+        $this->assertCount(2, $itemListElements);
 
-        $description = $json['itemListElement'][0]['item']['description'];
+        $firstElement = $itemListElements[0] ?? null;
+        $this->assertIsArray($firstElement);
+        $this->assertSame(1, $firstElement['position'] ?? null);
+
+        $firstItem = $firstElement['item'] ?? null;
+        $this->assertIsArray($firstItem);
+        $this->assertSame('Event', $firstItem['@type'] ?? null);
+        $this->assertArrayNotHasKey('@context', $firstItem);
+        $this->assertSame('https://agendanumerique.test/event/conference-symfony', $firstItem['url'] ?? null);
+
+        $description = $firstItem['description'] ?? null;
+        $this->assertIsString($description);
         $this->assertLessThanOrEqual(160, mb_strlen($description));
         $this->assertStringEndsWith('…', $description);
     }
@@ -141,11 +161,12 @@ class AppJsonLdRuntimeTest extends TestCase
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
     private function decode(string $html): array
     {
-        $this->assertSame(1, preg_match('~<script type="application/ld\+json">(.*)</script>~s', $html, $matches));
+        $result = preg_match('~<script type="application/ld\+json">(.*)</script>~s', $html, $matches);
+        $this->assertSame(1, $result, 'A single JSON-LD script tag is expected.');
 
         $json = json_decode($matches[1], true, 512, \JSON_THROW_ON_ERROR);
         $this->assertIsArray($json);
