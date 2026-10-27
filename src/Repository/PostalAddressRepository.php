@@ -11,10 +11,10 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<PostalAddress>
  *
- * @method PostalAddress|null find($id, $lockMode = null, $lockVersion = null)
- * @method PostalAddress|null findOneBy(array $criteria, array $orderBy = null)
+ * @method PostalAddress|null find(mixed $id, int|null $lockMode = null, int|null $lockVersion = null)
+ * @method PostalAddress|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
  * @method PostalAddress[]    findAll()
- * @method PostalAddress[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method PostalAddress[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class PostalAddressRepository extends ServiceEntityRepository
 {

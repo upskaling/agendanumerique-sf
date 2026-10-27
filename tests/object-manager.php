@@ -16,7 +16,13 @@ require dirname(__DIR__).'/vendor/autoload.php';
 
 (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 
-$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
+$environment = $_SERVER['APP_ENV'] ?? 'dev';
+
+if (!\is_string($environment)) {
+    throw new \RuntimeException('The "APP_ENV" environment variable must be a string.');
+}
+
+$kernel = new Kernel($environment, (bool) ($_SERVER['APP_DEBUG'] ?? false));
 $kernel->boot();
 
 return $kernel->getContainer()->get('doctrine')->getManager();

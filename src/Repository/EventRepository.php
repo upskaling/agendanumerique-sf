@@ -11,10 +11,10 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Event>
  *
- * @method Event|null find($id, $lockMode = null, $lockVersion = null)
- * @method Event|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Event|null find(mixed $id, int|null $lockMode = null, int|null $lockVersion = null)
+ * @method Event|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
  * @method Event[]    findAll()
- * @method Event[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Event[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, int|null $limit = null, int|null $offset = null)
  */
 class EventRepository extends ServiceEntityRepository
 {
@@ -29,7 +29,7 @@ class EventRepository extends ServiceEntityRepository
     public function createListQueryBuilder(): \Doctrine\ORM\QueryBuilder
     {
         return $this->createQueryBuilder('e')
-            ->orderBy('e.startAt', 'DESC');
+            ->orderBy('e.startAt', \SortDirection::Descending);
     }
 
     /**
@@ -44,7 +44,7 @@ class EventRepository extends ServiceEntityRepository
         ->where('e.startAt >= :now')
         ->setParameter('now', new \DateTime())
         ->andWhere('e.published IS NOT NULL')
-        ->orderBy('e.startAt', 'ASC')
+        ->orderBy('e.startAt', \SortDirection::Ascending)
         ;
 
         if (null !== $source && [] !== $source) {
