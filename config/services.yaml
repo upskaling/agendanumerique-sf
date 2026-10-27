@@ -30,7 +30,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     League\Glide\Server:
-        factory: ['League\Glide\ServerFactory', create]
+        factory: ['App\Image\GlideServerFactory', 'create']
         arguments:
-          - source: '%app.image_dir%'
-            cache: '%app.image_cache_dir%'
+          - '%app.image_dir%'
+          - '%app.image_cache_dir%'

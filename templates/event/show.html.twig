@@ -23,7 +23,7 @@
     <article>
         {% if event.image %}
         <div class="text-center">
-            <twig:Image src="{{ event.image }}" alt="" loading="lazy" format="webp" height="400"/>
+            <twig:Image src="{{ event.image }}" alt="" format="webp" width="1200" height="800" widths="400,800,1200" sizes="(min-width: 640px) 600px, 100vw" class="event-cover" fetchpriority="high"/>
         </div>
         {% endif %}
         <h1>{{ event.title }}</h1>

@@ -32,3 +32,18 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+/*
+ * Image de couverture d'un événement : boîte de ratio fixe pour éviter tout
+ * décalage de mise en page (CLS) pendant le chargement, sans rogner l'image
+ * (object-fit: contain). Le ratio et la largeur explicites évitent aussi
+ * l'audit Lighthouse « images sans dimensions ».
+ */
+.event-cover {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 3 / 2;
+  object-fit: contain;
+  margin-inline: auto;
+}

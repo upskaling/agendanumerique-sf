@@ -12,7 +12,7 @@
             <a href="{{ path('app_event_show_slug', {'slug': event.slug}) }}">
                 {% if event.image %}
                 <div class="text-center">
-                    <twig:Image src="{{ event.image }}" format="webp" width="200" height="100" alt="" loading="lazy"/>
+                    <twig:Image src="{{ event.image }}" format="webp" fit="crop" width="200" height="100" widths="200,400,600" sizes="200px" alt="" loading="lazy" static/>
                 </div>
                 {% endif %}
                 <h2>{{ event.title }}</h2>

@@ -42,6 +42,11 @@ class ImageController extends AbstractController
             throw new BadRequestHttpException('Invalid signature');
         }
 
+        // `static` n'est pas un paramètre Glide : il sert uniquement à forcer
+        // le rendu de la première image des sources animées (vignettes).
+        $static = $request->query->getBoolean('static');
+        unset($parameters['static']);
+
         /** @var string $url */
         $url = $request->query->get('url');
 
@@ -69,10 +74,8 @@ class ImageController extends AbstractController
         /** @var string $path */
         $path = $cacheItem->get();
 
-        if ($this->isImageGif($url)) {
-            return new BinaryFileResponse(
-                $this->getParameter('app.image_dir').'/'.$path
-            );
+        if (!$static && $this->isImageGif($url)) {
+            return $this->rawImageResponse($path);
         }
 
         $glide->setResponseFactory(new SymfonyResponseFactory($request));
@@ -84,8 +87,28 @@ class ImageController extends AbstractController
             return $response;
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), ['exception' => $e]);
+
+            // Certaines sources animées (GIF/WebP) ne sont pas décodables par
+            // GD : on renvoie le fichier d'origine plutôt qu'une page d'erreur.
+            if ($static && $this->isImageGif($url)) {
+                return $this->rawImageResponse($path);
+            }
+
             throw new BadRequestHttpException('Invalid image');
         }
+    }
+
+    /**
+     * Renvoie l'image téléchargée telle quelle (sources animées ou formats
+     * que Glide ne sait pas décoder).
+     */
+    private function rawImageResponse(string $path): BinaryFileResponse
+    {
+        $response = new BinaryFileResponse($this->getParameter('app.image_dir').'/'.$path);
+        $response->setPublic();
+        $response->setMaxAge(31536000);
+
+        return $response;
     }
 
     /**
