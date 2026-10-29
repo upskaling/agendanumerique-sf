@@ -171,7 +171,18 @@ class EventRetrievalAfupPoitiers implements EventRetrievalInterface
     private function setBasicEventInfo(EventValidationDTO $event, array $eventData): void
     {
         $event->setTitle($this->ensureString($eventData['title'] ?? ''));
-        $event->setLink($this->ensureString($eventData['eventUrl'] ?? ''));
+
+        $link = $this->ensureString($eventData['eventUrl'] ?? '');
+        $event->setLink($link);
+
+        $organizerUrl = (string) preg_replace('~/events/[^/]+/?$~', '/', $link);
+        if ($organizerUrl !== $link && '' !== $organizerUrl) {
+            $event->setOrganizerUrl($organizerUrl);
+        }
+
+        if (\array_key_exists('feeSettings', $eventData) && null === $eventData['feeSettings']) {
+            $event->setPrice(0.0);
+        }
     }
 
     /**

@@ -44,6 +44,12 @@
                 : {{ event.location }}
             </address>
             {% endif %}
+            {% if event.price is not null %}
+            <p>
+                <twig:ux:icon name="bi:cash-coin" height="28" width="28" aria-label="tarif" />
+                : {% if event.price == 0 %}Gratuit{% else %}{{ event.price|format_currency('EUR') }}{% endif %}
+            </p>
+            {% endif %}
             <p>
                 <twig:ux:icon name="bi:person" height="28" width="28" aria-label="organizer" />
                 : {{ event.organizer }}

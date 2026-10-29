@@ -54,7 +54,37 @@ class EventShowTest extends WebTestCase
         );
     }
 
-    private function createEvent(string $title, string $slug): Event
+    public function testPriceIsDisplayedWhenKnown(): void
+    {
+        $event = $this->createEvent('Événement payant', 'evenement-payant', 15.0);
+
+        $this->client->request('GET', '/event/'.$event->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('article footer', '15,00');
+    }
+
+    public function testFreeEventDisplaysGratuit(): void
+    {
+        $event = $this->createEvent('Événement gratuit', 'evenement-gratuit', 0.0);
+
+        $this->client->request('GET', '/event/'.$event->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('article footer', 'Gratuit');
+    }
+
+    public function testPriceIsNotDisplayedWhenUnknown(): void
+    {
+        $event = $this->createEvent('Événement sans tarif', 'evenement-sans-tarif');
+
+        $this->client->request('GET', '/event/'.$event->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertStringNotContainsString('aria-label="tarif"', (string) $this->client->getResponse()->getContent());
+    }
+
+    private function createEvent(string $title, string $slug, ?float $price = null): Event
     {
         $event = new Event();
         $event->setTitle($title);
@@ -63,6 +93,7 @@ class EventShowTest extends WebTestCase
         $event->setDescription('Description de '.$title);
         $event->setOrganizer('Organisateur de test');
         $event->setSource('cobaltpoitiers');
+        $event->setPrice($price);
         $event->setStartAt(new \DateTimeImmutable('+1 day'));
         $event->setPublished(new \DateTimeImmutable('-1 hour'));
 

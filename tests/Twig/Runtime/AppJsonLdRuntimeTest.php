@@ -55,7 +55,19 @@ class AppJsonLdRuntimeTest extends TestCase
         $this->assertSame([
             '@type' => 'Organization',
             'name' => 'Symfony Community',
+            'url' => 'https://symfony.com/',
         ], $json['organizer']);
+        $this->assertSame([
+            '@type' => 'Person',
+            'name' => 'Fabien Potencier',
+        ], $json['performer']);
+        $this->assertSame([
+            '@type' => 'Offer',
+            'price' => '15',
+            'priceCurrency' => 'EUR',
+            'availability' => 'https://schema.org/InStock',
+            'url' => 'https://agendanumerique.test/event/conference-symfony',
+        ], $json['offers']);
     }
 
     public function testLocationOnlyContainsKnownAddressFields(): void
@@ -83,6 +95,33 @@ class AppJsonLdRuntimeTest extends TestCase
         $json = $this->decode($this->runtime->encodeJsonLd($event));
 
         $this->assertArrayNotHasKey('endDate', $json);
+    }
+
+    public function testMissingEndDateFallsBackToStartDate(): void
+    {
+        $event = $this->createEvent();
+        $event->setEndAt(null);
+
+        $json = $this->decode($this->runtime->encodeJsonLd($event));
+
+        $this->assertSame($json['startDate'], $json['endDate']);
+    }
+
+    public function testOptionalFieldsAreOmittedWhenUnknown(): void
+    {
+        $event = $this->createEvent();
+        $event->setOrganizerUrl(null);
+        $event->setPerformer(null);
+        $event->setPrice(null);
+
+        $json = $this->decode($this->runtime->encodeJsonLd($event));
+
+        $this->assertArrayNotHasKey('performer', $json);
+        $this->assertArrayNotHasKey('offers', $json);
+        $this->assertSame([
+            '@type' => 'Organization',
+            'name' => 'Symfony Community',
+        ], $json['organizer']);
     }
 
     public function testJsonLdCannotBreakOutOfScriptTag(): void
@@ -152,6 +191,9 @@ class AppJsonLdRuntimeTest extends TestCase
         $event->setLink('https://example.com/event');
         $event->setDescription('Une conférence sur Symfony');
         $event->setOrganizer('Symfony Community');
+        $event->setOrganizerUrl('https://symfony.com/');
+        $event->setPerformer('Fabien Potencier');
+        $event->setPrice(15.0);
         $event->setSource('website');
         $event->setStartAt(new \DateTimeImmutable('2026-11-05T18:30:00+01:00'));
         $event->setEndAt(new \DateTimeImmutable('2026-11-05T20:00:00+01:00'));

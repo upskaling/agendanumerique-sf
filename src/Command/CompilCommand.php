@@ -138,6 +138,18 @@ class CompilCommand extends Command
             $existingEvent->setImage($newEventData->getImage());
         }
 
+        if (null !== $newEventData->getOrganizerUrl()) {
+            $existingEvent->setOrganizerUrl($newEventData->getOrganizerUrl());
+        }
+
+        if (null !== $newEventData->getPerformer()) {
+            $existingEvent->setPerformer($newEventData->getPerformer());
+        }
+
+        if (null !== $newEventData->getPrice()) {
+            $existingEvent->setPrice($newEventData->getPrice());
+        }
+
         $this->validateUpdatedEvent($existingEvent);
         $this->entityManager->persist($existingEvent);
     }

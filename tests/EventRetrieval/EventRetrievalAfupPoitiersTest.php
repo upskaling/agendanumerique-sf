@@ -65,5 +65,7 @@ class EventRetrievalAfupPoitiersTest extends TestCase
         $this->assertSame('Apéro PHP - Mercure, SSE, API Platform et un LLM élèvent un chat(bot) ', $events[0]->getTitle());
         $this->assertSame('https://www.meetup.com/fr-FR/afup-poitiers-php/events/308777211/', $events[0]->getLink());
         $this->assertSame('HTAG', $events[0]->getLocation()?->getName());
+        $this->assertSame('https://www.meetup.com/fr-FR/afup-poitiers-php/', $events[0]->getOrganizerUrl());
+        $this->assertSame(0.0, $events[0]->getPrice());
     }
 }

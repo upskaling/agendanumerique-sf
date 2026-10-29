@@ -93,12 +93,25 @@ class EventRetrievalEMF implements EventRetrievalInterface
     {
         $event = new EventValidationDTO(self::NAME);
         $event->setOrganizer(self::ORGANIZER);
+        $event->setOrganizerUrl(self::URI);
 
         $this->setEventLocation($event);
         $this->setEventBasicInfo($event, $eventData);
         $this->setEventDateTime($event, $eventCrawler);
+        $this->setEventPrice($event, $eventCrawler);
 
         return $event;
+    }
+
+    private function setEventPrice(EventValidationDTO $event, Crawler $crawler): void
+    {
+        $text = $crawler->filter('body')->text('');
+
+        if (!preg_match('/(?:plein\s+tarif|tarif\s+plein|tarif\s+normal)\s*:?\s*(\d+(?:[.,]\d{1,2})?)\s*€/iu', $text, $matches)) {
+            return;
+        }
+
+        $event->setPrice((float) str_replace(',', '.', $matches[1]));
     }
 
     private function setEventLocation(EventValidationDTO $event): void

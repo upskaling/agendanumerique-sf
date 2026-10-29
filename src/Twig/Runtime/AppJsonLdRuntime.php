@@ -26,6 +26,8 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
 
     private const LIST_DESCRIPTION_MAX_LENGTH = 160;
 
+    private const CURRENCY = 'EUR';
+
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
     ) {
@@ -103,6 +105,9 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
         $endAt = $event->getEndAt();
         if (null !== $endAt && (null === $startAt || $endAt > $startAt)) {
             $json['endDate'] = $endAt->format(\DateTimeInterface::ATOM);
+        } elseif (null === $endAt && null !== $startAt) {
+            // Un événement sans heure de fin est considéré comme ponctuel.
+            $json['endDate'] = $startAt->format(\DateTimeInterface::ATOM);
         }
 
         if (null !== $url = $this->eventUrl($event)) {
@@ -118,6 +123,33 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
                 '@type' => 'Organization',
                 'name' => $organizer,
             ];
+
+            $organizerUrl = $event->getOrganizerUrl();
+            if (null !== $organizerUrl && '' !== $organizerUrl) {
+                $json['organizer']['url'] = $organizerUrl;
+            }
+        }
+
+        if (null !== $performer = $this->plainText($event->getPerformer())) {
+            $json['performer'] = [
+                '@type' => 'Person',
+                'name' => $performer,
+            ];
+        }
+
+        if (null !== $price = $event->getPrice()) {
+            $offer = [
+                '@type' => 'Offer',
+                'price' => $this->formatPrice($price),
+                'priceCurrency' => self::CURRENCY,
+                'availability' => 'https://schema.org/InStock',
+            ];
+
+            if (isset($json['url'])) {
+                $offer['url'] = $json['url'];
+            }
+
+            $json['offers'] = $offer;
         }
 
         if (null !== $image = $this->plainText($event->getImage())) {
@@ -183,6 +215,16 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
         }
 
         return $event->getLink();
+    }
+
+    /**
+     * Formate un prix sans zéros inutiles pour schema.org ("15", "12.5", "0").
+     */
+    private function formatPrice(float $price): string
+    {
+        $formatted = number_format($price, 2, '.', '');
+
+        return mb_rtrim(mb_rtrim($formatted, '0'), '.') ?: '0';
     }
 
     /**

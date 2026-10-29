@@ -34,6 +34,15 @@ class EventValidationDTO
     private string $organizer;
 
     #[Assert\Url(requireTld: true)]
+    private ?string $organizerUrl = null;
+
+    #[Assert\Length(max: 255)]
+    private ?string $performer = null;
+
+    #[Assert\PositiveOrZero]
+    private ?float $price = null;
+
+    #[Assert\Url(requireTld: true)]
     private ?string $image = null;
 
     private ?PostalAddress $location = null;
@@ -78,6 +87,10 @@ class EventValidationDTO
         if (isset($this->organizer)) {
             $event->setOrganizer($this->organizer);
         }
+
+        $event->setOrganizerUrl($this->organizerUrl);
+        $event->setPerformer($this->performer);
+        $event->setPrice($this->price);
 
         if (isset($this->image)) {
             $event->setImage($this->image);
@@ -161,6 +174,42 @@ class EventValidationDTO
     public function setOrganizer(string $organizer): self
     {
         $this->organizer = $organizer;
+
+        return $this;
+    }
+
+    public function getOrganizerUrl(): ?string
+    {
+        return $this->organizerUrl;
+    }
+
+    public function setOrganizerUrl(?string $organizerUrl): self
+    {
+        $this->organizerUrl = $organizerUrl;
+
+        return $this;
+    }
+
+    public function getPerformer(): ?string
+    {
+        return $this->performer;
+    }
+
+    public function setPerformer(?string $performer): self
+    {
+        $this->performer = $performer;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?float $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

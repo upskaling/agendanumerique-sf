@@ -9,6 +9,7 @@ use App\Entity\PostalAddress;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -34,6 +35,20 @@ class ProposeNewType extends AbstractType
                 'required' => false,
             ])
             ->add('organizer')
+            ->add('organizerUrl', UrlType::class, [
+                'required' => false,
+                'label' => "site web de l'organisateur",
+                'default_protocol' => 'https',
+            ])
+            ->add('performer', null, [
+                'required' => false,
+                'label' => 'intervenant',
+            ])
+            ->add('price', NumberType::class, [
+                'required' => false,
+                'scale' => 2,
+                'label' => 'prix (en euros, laisser vide si inconnu)',
+            ])
             ->add('image', UrlType::class, [
                 'label' => "url d'une image",
                 'attr' => [

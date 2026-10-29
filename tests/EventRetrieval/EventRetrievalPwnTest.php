@@ -59,6 +59,8 @@ class EventRetrievalPwnTest extends TestCase
         $this->assertSame('Rewrite in RUST par Jérémy Lempereur', $events[0]->getTitle());
         $this->assertSame('https://pwn-association.org/evenements/rewrite-in-rust/', $events[0]->getLink());
         $this->assertNull($events[0]->getLocation()?->getName());
+        $this->assertSame('Jérémy Lempereur', $events[0]->getPerformer());
+        $this->assertSame('https://pwn-association.org', $events[0]->getOrganizerUrl());
     }
 
     public function testRetrieveEventsContinuesWhenAnEventIsUnavailable(): void

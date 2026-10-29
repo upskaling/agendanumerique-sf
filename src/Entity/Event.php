@@ -60,6 +60,18 @@ class Event
 
     #[Assert\Url(requireTld: true)]
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $organizerUrl = null;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $performer = null;
+
+    #[Assert\PositiveOrZero]
+    #[ORM\Column(nullable: true)]
+    private ?float $price = null;
+
+    #[Assert\Url(requireTld: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[Assert\NotBlank]
@@ -162,6 +174,42 @@ class Event
     public function setOrganizer(string $organizer): static
     {
         $this->organizer = $organizer;
+
+        return $this;
+    }
+
+    public function getOrganizerUrl(): ?string
+    {
+        return $this->organizerUrl;
+    }
+
+    public function setOrganizerUrl(?string $organizerUrl): static
+    {
+        $this->organizerUrl = $organizerUrl;
+
+        return $this;
+    }
+
+    public function getPerformer(): ?string
+    {
+        return $this->performer;
+    }
+
+    public function setPerformer(?string $performer): static
+    {
+        $this->performer = $performer;
+
+        return $this;
+    }
+
+    public function getPrice(): ?float
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?float $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }

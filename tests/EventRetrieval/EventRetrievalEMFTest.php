@@ -52,6 +52,8 @@ class EventRetrievalEMFTest extends TestCase
         $this->assertSame('Créer une planche de BD à l’aide de l\'IA - Espace Mendès France', $events[0]->getTitle());
         $this->assertSame('https://emf.fr/event/je-cree-une-planche-de-bd-a-laide-dune-ia/', $events[0]->getLink());
         $this->assertNull($events[0]->getLocation()?->getName());
+        $this->assertSame('https://emf.fr', $events[0]->getOrganizerUrl());
+        $this->assertSame(15.0, $events[0]->getPrice());
     }
 
     private function getEventDetailHtml(): string|false

@@ -6,6 +6,8 @@ namespace App\Form;
 
 use App\Entity\Event;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,6 +22,17 @@ class EventType extends AbstractType
             ->add('startAt')
             ->add('endAt')
             ->add('organizer')
+            ->add('organizerUrl', UrlType::class, [
+                'required' => false,
+                'default_protocol' => 'https',
+            ])
+            ->add('performer', null, [
+                'required' => false,
+            ])
+            ->add('price', NumberType::class, [
+                'required' => false,
+                'scale' => 2,
+            ])
             ->add('image')
             ->add('location')
         ;

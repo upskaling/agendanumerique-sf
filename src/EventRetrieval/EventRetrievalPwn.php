@@ -149,6 +149,7 @@ class EventRetrievalPwn implements EventRetrievalInterface
         $event = new EventValidationDTO(self::NAME);
 
         $event->setOrganizer(self::ORGANIZER);
+        $event->setOrganizerUrl(self::URI);
 
         // .event-title
         $title = $crawler->filter('.event-title')->text('');
@@ -173,6 +174,12 @@ class EventRetrievalPwn implements EventRetrievalInterface
         // .event-description
         $description = $crawler->filter('.event-description');
         $event->setDescription($description->html());
+
+        $performer = $crawler->filter('.event-speaker .person-name')->text('');
+        $performer = mb_trim((string) preg_replace('/^\s*Nom\s*:\s*/iu', '', $performer));
+        if ('' !== $performer) {
+            $event->setPerformer($performer);
+        }
 
         $lieu = $crawler->filter('.event-description > ul:nth-child(2) > li:nth-child(1) > a')->text('');
         $lieuName = 'La Taverne Du Geek';
