@@ -2,6 +2,25 @@
 
 {% block title %}Edit Event{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/ckeditor/ckeditor.js" crossorigin="anonymous"></script>
+    <style>
+        .ck-editor__editable { min-height: 320px !important; }
+    </style>
+    <script>
+        function initRichTextEditor() {
+            const el = document.querySelector('#event_description');
+            if (el && window.ClassicEditor && !el.dataset.ckEditor) {
+                el.dataset.ckEditor = 'true';
+                ClassicEditor.create(el).catch(function (error) { console.error(error); });
+            }
+        }
+        document.addEventListener('DOMContentLoaded', initRichTextEditor);
+        document.addEventListener('turbo:load', initRichTextEditor);
+    </script>
+{% endblock %}
+
 {% block main %}
     <h1>Edit Event</h1>
 

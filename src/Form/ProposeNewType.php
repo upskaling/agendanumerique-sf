@@ -26,8 +26,9 @@ class ProposeNewType extends AbstractType
                 'default_protocol' => 'https',
             ])
             ->add('description', TextareaType::class, [
+                'sanitize_html' => true,
                 'attr' => [
-                    'rows' => 5,
+                    'rows' => 6,
                 ],
             ])
             ->add('startAt', DateTimeType::class)
