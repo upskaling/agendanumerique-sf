@@ -66,8 +66,19 @@ class AppJsonLdRuntimeTest extends TestCase
             'price' => '15',
             'priceCurrency' => 'EUR',
             'availability' => 'https://schema.org/InStock',
+            'validFrom' => '2026-11-05T18:30:00+01:00',
             'url' => 'https://agendanumerique.test/event/conference-symfony',
         ], $json['offers']);
+    }
+
+    public function testOfferValidFromUsesPublishedDateWhenKnown(): void
+    {
+        $event = $this->createEvent();
+        $event->setPublished(new \DateTimeImmutable('2026-10-01T09:00:00+02:00'));
+
+        $json = $this->decode($this->runtime->encodeJsonLd($event));
+
+        $this->assertSame('2026-10-01T09:00:00+02:00', $this->offerValidFrom($json));
     }
 
     public function testLocationOnlyContainsKnownAddressFields(): void
@@ -174,6 +185,17 @@ class AppJsonLdRuntimeTest extends TestCase
         $this->assertIsString($description);
         $this->assertLessThanOrEqual(160, mb_strlen($description));
         $this->assertStringEndsWith('…', $description);
+    }
+
+    /**
+     * @param array<mixed> $json
+     */
+    private function offerValidFrom(array $json): mixed
+    {
+        $offers = $json['offers'] ?? null;
+        $this->assertIsArray($offers);
+
+        return $offers['validFrom'] ?? null;
     }
 
     private function createEvent(): Event

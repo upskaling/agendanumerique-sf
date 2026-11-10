@@ -145,6 +145,14 @@ class AppJsonLdRuntime implements RuntimeExtensionInterface
                 'availability' => 'https://schema.org/InStock',
             ];
 
+            // Google Search Console exige "validFrom" dans les offres : l'offre
+            // est valable depuis la publication de l'événement, ou à défaut
+            // depuis sa date de début.
+            $validFrom = $event->getPublished() ?? $startAt;
+            if (null !== $validFrom) {
+                $offer['validFrom'] = $validFrom->format(\DateTimeInterface::ATOM);
+            }
+
             if (isset($json['url'])) {
                 $offer['url'] = $json['url'];
             }
